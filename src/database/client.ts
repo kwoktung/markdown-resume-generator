@@ -5,6 +5,7 @@ import {
   sessionTable,
   verificationTokenTable,
   bookTable,
+  documentTable,
 } from "./schema";
 import { Logger } from "drizzle-orm/logger";
 import { getLogger } from "@/lib/logger";
@@ -44,6 +45,7 @@ export function createDatabaseClient(env: CloudflareEnv) {
       sessionTable,
       verificationTokenTable,
       bookTable,
+      documentTable,
     },
     logger: new DrizzleLogger(env),
   });
