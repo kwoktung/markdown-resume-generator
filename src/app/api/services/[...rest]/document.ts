@@ -3,7 +3,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { createContext } from "@/lib/context";
 import { Services } from "@/services";
 import { HttpResponse } from "@/lib/response";
-import { getNextAuthSession } from "@/lib/auth";
+import { getNextAuthSessionAsync } from "@/lib/auth";
 import { markdownToHtml } from "@/lib/markdown";
 import {
   generatePdfFromMarkdown,
@@ -310,7 +310,7 @@ const documentApp = new OpenAPIHono({
 });
 
 documentApp.openapi(createDocument, async (c) => {
-  const session = await getNextAuthSession();
+  const session = await getNextAuthSessionAsync();
   if (!session?.user?.id) {
     return c.json({ error: "Unauthorized" }, 401);
   }
@@ -328,7 +328,7 @@ documentApp.openapi(createDocument, async (c) => {
 });
 
 documentApp.openapi(updateDocument, async (c) => {
-  const session = await getNextAuthSession();
+  const session = await getNextAuthSessionAsync();
   if (!session?.user?.id) {
     return c.json({ error: "Unauthorized" }, 401);
   }
@@ -351,7 +351,7 @@ documentApp.openapi(updateDocument, async (c) => {
 });
 
 documentApp.openapi(deleteDocument, async (c) => {
-  const session = await getNextAuthSession();
+  const session = await getNextAuthSessionAsync();
   if (!session?.user?.id) {
     return c.json({ error: "Unauthorized" }, 401);
   }
@@ -368,7 +368,7 @@ documentApp.openapi(deleteDocument, async (c) => {
 });
 
 documentApp.openapi(getDocument, async (c) => {
-  const session = await getNextAuthSession();
+  const session = await getNextAuthSessionAsync();
   if (!session?.user?.id) {
     return c.json({ error: "Unauthorized" }, 401);
   }
@@ -385,7 +385,7 @@ documentApp.openapi(getDocument, async (c) => {
 });
 
 documentApp.openapi(listDocuments, async (c) => {
-  const session = await getNextAuthSession();
+  const session = await getNextAuthSessionAsync();
   if (!session?.user?.id) {
     return c.json({ error: "Unauthorized" }, 401);
   }
@@ -408,7 +408,7 @@ documentApp.openapi(listDocuments, async (c) => {
 });
 
 documentApp.openapi(searchDocuments, async (c) => {
-  const session = await getNextAuthSession();
+  const session = await getNextAuthSessionAsync();
   if (!session?.user?.id) {
     return c.json({ error: "Unauthorized" }, 401);
   }
@@ -428,7 +428,7 @@ documentApp.openapi(searchDocuments, async (c) => {
 });
 
 documentApp.openapi(duplicateDocument, async (c) => {
-  const session = await getNextAuthSession();
+  const session = await getNextAuthSessionAsync();
   if (!session?.user?.id) {
     return c.json({ error: "Unauthorized" }, 401);
   }
@@ -445,7 +445,7 @@ documentApp.openapi(duplicateDocument, async (c) => {
 });
 
 documentApp.openapi(generatePdf, async (c) => {
-  const session = await getNextAuthSession();
+  const session = await getNextAuthSessionAsync();
   if (!session?.user?.id) {
     return c.json({ error: "Unauthorized" }, 401);
   }

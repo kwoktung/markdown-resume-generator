@@ -17,8 +17,8 @@ export const getNextAuth = (env: CloudflareEnv) => {
   });
 };
 
-export const getNextAuthSession = async () => {
-  const context = getCloudflareContext({ async: false });
+export const getNextAuthSessionAsync = async () => {
+  const context = await getCloudflareContext({ async: true });
   const { auth } = getNextAuth(context.env);
   return await auth();
 };
