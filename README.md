@@ -73,6 +73,56 @@ cp .env.example .env
 wrangler secret bulk .env
 ```
 
+### Database Migration
+
+#### Local Development Migration
+
+Run these 4 steps to set up your local database:
+
+1. **Create a local D1 database**
+
+```bash
+npx wrangler d1 create markdown-resume
+```
+
+2. **Update your `wrangler.jsonc` with the database ID**
+
+3. **Generate migration files** (if you've made schema changes)
+
+```bash
+yarn db:generate
+```
+
+4. **Apply migrations to your local database**
+
+```bash
+yarn db:migrate:local
+```
+
+#### Production Migration
+
+Run these 4 steps to set up your production database:
+
+1. **Create a production D1 database**
+
+```bash
+npx wrangler d1 create markdown-resume
+```
+
+2. **Update your `wrangler.jsonc` with the database ID**
+
+3. **Generate migration files** (if you've made schema changes)
+
+```bash
+yarn db:generate
+```
+
+4. **Apply migrations to your remote database**
+
+```bash
+yarn db:migrate:remote
+```
+
 ### Development
 
 Run the development server:
@@ -101,19 +151,3 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ## Deployment
 
 This application is configured for deployment on [Cloudflare Pages](https://pages.cloudflare.com) with Cloudflare D1 database. Deployment to other platforms is not currently supported.
-
-### How to Deploy
-
-1. **Create D1 database**
-
-```bash
-npx wrangler d1 create markdown-resume
-```
-
-2. **Run database migration**
-
-```bash
-yarn db:migrate:remote
-```
-
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
