@@ -1,34 +1,34 @@
 # Auto-label PRs based on changed files
 
-'documentation':
+"documentation":
   - changed-files:
-    - any-glob-to-any-file: ['*.md', 'docs/**/*']
+      - any-glob-to-any-file: ["*.md", "docs/**/*"]
 
-'dependencies':
+"dependencies":
   - changed-files:
-    - any-glob-to-any-file: ['package.json', 'yarn.lock', 'package-lock.json']
+      - any-glob-to-any-file: ["package.json", "yarn.lock", "package-lock.json"]
 
-'database':
+"database":
   - changed-files:
-    - any-glob-to-any-file: ['src/database/**/*', '**/migrations/**/*', 'drizzle.config.ts']
+      - any-glob-to-any-file:
+          ["src/database/**/*", "**/migrations/**/*", "drizzle.config.ts"]
 
-'ui':
+"ui":
   - changed-files:
-    - any-glob-to-any-file: ['src/components/ui/**/*', 'src/app/globals.css']
+      - any-glob-to-any-file: ["src/components/ui/**/*", "src/app/globals.css"]
 
-'api':
+"api":
   - changed-files:
-    - any-glob-to-any-file: ['src/app/api/**/*', 'src/services/**/*']
+      - any-glob-to-any-file: ["src/app/api/**/*", "src/services/**/*"]
 
-'auth':
+"auth":
   - changed-files:
-    - any-glob-to-any-file: ['src/lib/auth/**/*', 'src/app/(login)/**/*']
+      - any-glob-to-any-file: ["src/lib/auth/**/*", "src/app/(login)/**/*"]
 
-'configuration':
+"configuration":
   - changed-files:
-    - any-glob-to-any-file: 
-      - '*.config.*'
-      - '*.json'
-      - 'wrangler.jsonc'
-      - '.github/**/*'
-
+      - any-glob-to-any-file:
+          - "*.config.*"
+          - "*.json"
+          - "wrangler.jsonc"
+          - ".github/**/*"

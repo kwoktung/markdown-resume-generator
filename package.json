@@ -14,7 +14,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate:local": "wrangler d1 migrations apply markdown-resume",
     "db:migrate:remote": "wrangler d1 migrations apply markdown-resume --remote",
-    "reset": "wrangler d1 migrations reset markdown-resume"
+    "reset": "wrangler d1 migrations reset markdown-resume",
+    "secrets:bulk": "wrangler secret bulk .env"
   },
   "dependencies": {
     "@auth/d1-adapter": "^1.10.0",
