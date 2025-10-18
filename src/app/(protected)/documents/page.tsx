@@ -22,7 +22,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Pencil, Trash2, FileText, Loader2, Copy } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  FileText,
+  Loader2,
+  Copy,
+  LogOut,
+} from "lucide-react";
 import axios from "axios";
 
 import { DocumentLoadingState } from "./loading-state";
@@ -125,14 +133,25 @@ const Dashboard = () => {
                 Create and manage your resume documents
               </p>
             </div>
-            <Button
-              size="lg"
-              className="gap-2"
-              onClick={() => router.push("/editor")}
-            >
-              <Plus className="size-5" />
-              New Document
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                size="lg"
+                variant="outline"
+                className="gap-2"
+                onClick={() => router.push("/sign-out")}
+              >
+                <LogOut className="size-5" />
+                Logout
+              </Button>
+              <Button
+                size="lg"
+                className="gap-2"
+                onClick={() => router.push("/editor")}
+              >
+                <Plus className="size-5" />
+                New Document
+              </Button>
+            </div>
           </div>
         </div>
 
