@@ -6,6 +6,8 @@ import { MarkdownEditor } from "@/components/markdown-editor";
 import { MarkdownPreview } from "@/components/markdown-preview";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import {
   Save,
   Download,
@@ -17,11 +19,13 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import axios from "axios";
+import { useAutoSave } from "./auto-save-context";
 
 export default function EditorPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const documentId = searchParams?.get("id");
+  const { autoSaveEnabled, setAutoSaveEnabled } = useAutoSave();
 
   const [title, setTitle] = useState("Untitled Document");
   const [content, setContent] = useState("");
@@ -88,7 +92,12 @@ export default function EditorPage() {
 
   // Autosave effect - triggers 2 seconds after last change
   useEffect(() => {
-    if (!hasUnsavedChanges || isLoadingRef.current || !documentId) {
+    if (
+      !autoSaveEnabled ||
+      !hasUnsavedChanges ||
+      isLoadingRef.current ||
+      !documentId
+    ) {
       return;
     }
 
@@ -107,7 +116,7 @@ export default function EditorPage() {
         clearTimeout(autosaveTimeoutRef.current);
       }
     };
-  }, [hasUnsavedChanges, documentId, handleSave]);
+  }, [autoSaveEnabled, hasUnsavedChanges, documentId, handleSave]);
 
   const handleTitleChange = (newTitle: string) => {
     setTitle(newTitle);
@@ -185,7 +194,7 @@ export default function EditorPage() {
 
         <div className="flex items-center gap-3 shrink-0">
           {/* Status Indicator */}
-          <div className="flex items-center gap-2 min-w-[140px]">
+          <div className="flex items-center gap-2">
             {isSaving && (
               <span className="text-sm text-primary flex items-center gap-2">
                 <Save className="h-4 w-4 animate-pulse" />
@@ -221,6 +230,21 @@ export default function EditorPage() {
                 <Eye className="h-5 w-5" />
               )}
             </Button>
+
+            {/* Auto-save Toggle */}
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border bg-background/50">
+              <Switch
+                id="auto-save-editor"
+                checked={autoSaveEnabled}
+                onCheckedChange={setAutoSaveEnabled}
+              />
+              <Label
+                htmlFor="auto-save-editor"
+                className="text-sm font-medium cursor-pointer"
+              >
+                Auto-save
+              </Label>
+            </div>
 
             <Button
               onClick={handleSave}
