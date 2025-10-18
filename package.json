@@ -36,7 +36,6 @@
     "drizzle-orm": "^0.44.4",
     "github-markdown-css": "^5.8.1",
     "hono": "^4.9.2",
-    "isomorphic-dompurify": "^2.29.0",
     "lucide-react": "^0.539.0",
     "marked": "^16.4.1",
     "next": "15.4.6",
