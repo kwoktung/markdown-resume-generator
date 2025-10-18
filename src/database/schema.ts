@@ -61,36 +61,6 @@ export const verificationTokenTable = sqliteTable(
   },
 );
 
-// Book table
-export const bookTable = sqliteTable(
-  "books",
-  {
-    id: integer("id").primaryKey({ autoIncrement: true }),
-    title: text("title").notNull(),
-    author: text("author").notNull(),
-    isbn: text("isbn").unique(),
-    description: text("description"),
-    publishedYear: integer("published_year"),
-    genre: text("genre"),
-    pages: integer("pages"),
-    createdAt: integer("created_at", { mode: "timestamp" }).default(
-      sql`(unixepoch())`,
-    ),
-    updatedAt: integer("updated_at", { mode: "timestamp" }).default(
-      sql`(unixepoch())`,
-    ),
-    deletedAt: integer("deleted_at", { mode: "timestamp" }),
-  },
-  (table) => {
-    return [
-      index("books_title_idx").on(table.title),
-      index("books_author_idx").on(table.author),
-      index("books_isbn_idx").on(table.isbn),
-      index("books_genre_idx").on(table.genre),
-    ];
-  },
-);
-
 // Documents table for markdown content
 export const documentTable = sqliteTable(
   "documents",

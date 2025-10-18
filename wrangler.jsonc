@@ -4,7 +4,7 @@
  */
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "nextjs-hono-cloudflare",
+  "name": "markdown-resume",
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-03-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
@@ -18,7 +18,7 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "NextJS-Hono-Cloudflare",
+      "database_name": "markdown-resume",
       "database_id": "17ea1884-a7c1-4019-b03c-7eabedebe0fa",
       "migrations_dir": "./src/database/migrations",
     },

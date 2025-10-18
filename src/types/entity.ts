@@ -3,7 +3,6 @@ import {
   sessionTable,
   userTable,
   verificationTokenTable,
-  bookTable,
   documentTable,
 } from "@/database/schema";
 
@@ -16,10 +15,6 @@ export type NewUserItem = typeof userTable.$inferInsert;
 export type VerificationTokenItem = typeof verificationTokenTable.$inferSelect;
 export type NewVerificationTokenItem =
   typeof verificationTokenTable.$inferInsert;
-
-// Book types
-export type BookItem = typeof bookTable.$inferSelect;
-export type NewBookItem = typeof bookTable.$inferInsert;
 
 // Document types
 export type DocumentItem = typeof documentTable.$inferSelect;
