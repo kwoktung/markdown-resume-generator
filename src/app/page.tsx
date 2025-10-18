@@ -16,18 +16,6 @@ export default function Home() {
             </span>
           </Link>
           <nav className="flex items-center gap-6">
-            <Link
-              href="/dashboard"
-              className="text-sm font-medium transition-colors hover:text-primary"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/sign-in"
-              className="text-sm font-medium transition-colors hover:text-primary"
-            >
-              Sign In
-            </Link>
             <ThemeToggle />
           </nav>
         </div>
@@ -53,7 +41,7 @@ export default function Home() {
 
           <div className="flex flex-col sm:flex-row items-center gap-4 mt-4">
             <Button asChild size="lg" className="text-base">
-              <Link href="/sign-up">
+              <Link href="/sign-in">
                 Get Started
                 <Edit className="ml-2 h-4 w-4" />
               </Link>
