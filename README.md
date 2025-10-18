@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Markdown Resume
+
+A modern web application for creating and managing professional resumes using Markdown. Built with Next.js, this project provides an intuitive markdown editor with live preview and PDF export capabilities.
+
+## Features
+
+- **Markdown Editor**: Write your resume in Markdown with real-time preview
+- **Authentication**: Secure user authentication with NextAuth.js
+- **Document Management**: Create, edit, and manage multiple resume documents
+- **PDF Export**: Convert your markdown resume to PDF format
+- **Modern UI**: Clean and responsive interface built with React and Tailwind CSS
+- **Theme Support**: Light and dark mode theme toggle
+- **Database Integration**: Persistent storage with Drizzle ORM
+
+## Tech Stack
+
+- **Framework**: [Next.js](https://nextjs.org) with App Router
+- **Authentication**: NextAuth.js
+- **Database**: Drizzle ORM
+- **Styling**: Tailwind CSS
+- **UI Components**: Shadcn/ui
+- **Language**: TypeScript
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+ or Bun
+- Yarn, npm, pnpm, or Bun package manager
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
 
 ```bash
-npm run dev
+yarn install
 # or
+npm install
+# or
+pnpm install
+# or
+bun install
+```
+
+3. Set up your environment variables (create a `.env.local` file)
+
+### Development
+
+Run the development server:
+
+```bash
 yarn dev
+# or
+npm run dev
 # or
 pnpm dev
 # or
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/src/app` - Next.js app router pages and API routes
+- `/src/components` - Reusable React components
+- `/src/database` - Database schema and migrations
+- `/src/lib` - Utility functions and helpers
+- `/src/services` - Business logic and service layer
+- `/src/types` - TypeScript type definitions
 
-## Learn More
+## Deployment
 
-To learn more about Next.js, take a look at the following resources:
+This application can be deployed on:
+- [Vercel](https://vercel.com) (recommended for Next.js)
+- [Cloudflare Pages](https://pages.cloudflare.com) (configured with `wrangler.jsonc`)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
