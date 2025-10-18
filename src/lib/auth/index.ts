@@ -2,8 +2,9 @@ import NextAuth from "next-auth";
 
 import { D1Adapter } from "@auth/d1-adapter";
 import Google from "next-auth/providers/google";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
-export const createAuthFactory = (env: CloudflareEnv) => {
+export const getNextAuth = (env: CloudflareEnv) => {
   return NextAuth({
     secret: env.AUTH_SECRET,
     providers: [
@@ -14,4 +15,10 @@ export const createAuthFactory = (env: CloudflareEnv) => {
     ],
     adapter: D1Adapter(env.DB),
   });
+};
+
+export const getNextAuthSession = async () => {
+  const context = getCloudflareContext({ async: false });
+  const { auth } = getNextAuth(context.env);
+  return await auth();
 };

@@ -73,6 +73,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ## Deployment
 
 This application can be deployed on:
+
 - [Vercel](https://vercel.com) (recommended for Next.js)
 - [Cloudflare Pages](https://pages.cloudflare.com) (configured with `wrangler.jsonc`)
 

@@ -3,7 +3,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { createContext } from "@/lib/context";
 import { Services } from "@/services";
 import { HttpResponse } from "@/lib/response";
-import { createAuthFactory } from "@/lib/auth";
+import { getNextAuthSession } from "@/lib/auth";
 import { markdownToHtml } from "@/lib/markdown";
 import {
   generatePdfFromMarkdown,
@@ -309,18 +309,9 @@ const documentApp = new OpenAPIHono({
   },
 });
 
-// Helper function to get authenticated user
-async function getAuthenticatedUser() {
-  const context = getCloudflareContext({ async: false });
-  const env = context.env;
-  const { auth } = createAuthFactory(env);
-  const session = await auth();
-  return session?.user?.id;
-}
-
 documentApp.openapi(createDocument, async (c) => {
-  const userId = await getAuthenticatedUser();
-  if (!userId) {
+  const session = await getNextAuthSession();
+  if (!session?.user?.id) {
     return c.json({ error: "Unauthorized" }, 401);
   }
 
@@ -331,14 +322,14 @@ documentApp.openapi(createDocument, async (c) => {
   const document = await services.document.createDocument({
     title: body.title,
     content: body.content,
-    userId,
+    userId: session.user.id,
   });
   return c.json({ id: document.id, success: true });
 });
 
 documentApp.openapi(updateDocument, async (c) => {
-  const userId = await getAuthenticatedUser();
-  if (!userId) {
+  const session = await getNextAuthSession();
+  if (!session?.user?.id) {
     return c.json({ error: "Unauthorized" }, 401);
   }
 
@@ -348,7 +339,11 @@ documentApp.openapi(updateDocument, async (c) => {
   const ctx = createContext(getCloudflareContext({ async: false }).env);
   const services = new Services(ctx);
 
-  const result = await services.document.updateDocument(id, userId, body);
+  const result = await services.document.updateDocument(
+    id,
+    session.user.id,
+    body,
+  );
   if (!result) {
     return c.json({ error: "Document not found" }, 404);
   }
@@ -356,8 +351,8 @@ documentApp.openapi(updateDocument, async (c) => {
 });
 
 documentApp.openapi(deleteDocument, async (c) => {
-  const userId = await getAuthenticatedUser();
-  if (!userId) {
+  const session = await getNextAuthSession();
+  if (!session?.user?.id) {
     return c.json({ error: "Unauthorized" }, 401);
   }
 
@@ -365,7 +360,7 @@ documentApp.openapi(deleteDocument, async (c) => {
   const ctx = createContext(getCloudflareContext({ async: false }).env);
   const services = new Services(ctx);
 
-  const result = await services.document.deleteDocument(id, userId);
+  const result = await services.document.deleteDocument(id, session.user.id);
   if (!result) {
     return c.json({ error: "Document not found" }, 404);
   }
@@ -373,8 +368,8 @@ documentApp.openapi(deleteDocument, async (c) => {
 });
 
 documentApp.openapi(getDocument, async (c) => {
-  const userId = await getAuthenticatedUser();
-  if (!userId) {
+  const session = await getNextAuthSession();
+  if (!session?.user?.id) {
     return c.json({ error: "Unauthorized" }, 401);
   }
 
@@ -382,7 +377,7 @@ documentApp.openapi(getDocument, async (c) => {
   const ctx = createContext(getCloudflareContext({ async: false }).env);
   const services = new Services(ctx);
 
-  const document = await services.document.getDocumentById(id, userId);
+  const document = await services.document.getDocumentById(id, session.user.id);
   if (!document) {
     return c.json({ error: "Document not found" }, 404);
   }
@@ -390,8 +385,8 @@ documentApp.openapi(getDocument, async (c) => {
 });
 
 documentApp.openapi(listDocuments, async (c) => {
-  const userId = await getAuthenticatedUser();
-  if (!userId) {
+  const session = await getNextAuthSession();
+  if (!session?.user?.id) {
     return c.json({ error: "Unauthorized" }, 401);
   }
 
@@ -399,8 +394,12 @@ documentApp.openapi(listDocuments, async (c) => {
   const ctx = createContext(getCloudflareContext({ async: false }).env);
   const services = new Services(ctx);
 
-  const documents = await services.document.getDocuments(userId, limit, offset);
-  const total = await services.document.getDocumentsCount(userId);
+  const documents = await services.document.getDocuments(
+    session.user.id,
+    limit,
+    offset,
+  );
+  const total = await services.document.getDocumentsCount(session.user.id);
 
   return c.json({
     documents,
@@ -409,8 +408,8 @@ documentApp.openapi(listDocuments, async (c) => {
 });
 
 documentApp.openapi(searchDocuments, async (c) => {
-  const userId = await getAuthenticatedUser();
-  if (!userId) {
+  const session = await getNextAuthSession();
+  if (!session?.user?.id) {
     return c.json({ error: "Unauthorized" }, 401);
   }
 
@@ -418,7 +417,10 @@ documentApp.openapi(searchDocuments, async (c) => {
   const ctx = createContext(getCloudflareContext({ async: false }).env);
   const services = new Services(ctx);
 
-  const documents = await services.document.searchDocuments(userId, query);
+  const documents = await services.document.searchDocuments(
+    session.user.id,
+    query,
+  );
   return c.json({
     documents,
     total: documents.length,
@@ -426,8 +428,8 @@ documentApp.openapi(searchDocuments, async (c) => {
 });
 
 documentApp.openapi(duplicateDocument, async (c) => {
-  const userId = await getAuthenticatedUser();
-  if (!userId) {
+  const session = await getNextAuthSession();
+  if (!session?.user?.id) {
     return c.json({ error: "Unauthorized" }, 401);
   }
 
@@ -435,13 +437,16 @@ documentApp.openapi(duplicateDocument, async (c) => {
   const ctx = createContext(getCloudflareContext({ async: false }).env);
   const services = new Services(ctx);
 
-  const document = await services.document.duplicateDocument(id, userId);
+  const document = await services.document.duplicateDocument(
+    id,
+    session.user.id,
+  );
   return c.json({ document, success: true });
 });
 
 documentApp.openapi(generatePdf, async (c) => {
-  const userId = await getAuthenticatedUser();
-  if (!userId) {
+  const session = await getNextAuthSession();
+  if (!session?.user?.id) {
     return c.json({ error: "Unauthorized" }, 401);
   }
 
@@ -451,7 +456,10 @@ documentApp.openapi(generatePdf, async (c) => {
 
   try {
     // Get document
-    const document = await services.document.getDocumentById(id, userId);
+    const document = await services.document.getDocumentById(
+      id,
+      session.user.id,
+    );
     if (!document) {
       return c.json({ error: "Document not found" }, 404);
     }
