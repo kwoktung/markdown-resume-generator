@@ -19,7 +19,7 @@
     {
       "binding": "DB",
       "database_name": "markdown-resume",
-      "database_id": "72225bfa-f3d7-4d55-a213-94ad0ecbed7e",
+      "database_id": "41fdef06-9324-471d-91ac-eaf68c995b72",
       "migrations_dir": "./src/database/migrations",
     },
   ],

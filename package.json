@@ -12,8 +12,8 @@
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts",
     "db:generate": "drizzle-kit generate",
-    "db:migrate:local": "wrangler d1 migrations apply markdown-resume --local",
-    "db:migrate:remote": "wrangler d1 migrations apply markdown-resume",
+    "db:migrate:local": "wrangler d1 migrations apply markdown-resume",
+    "db:migrate:remote": "wrangler d1 migrations apply markdown-resume --remote",
     "reset": "wrangler d1 migrations reset markdown-resume"
   },
   "dependencies": {
