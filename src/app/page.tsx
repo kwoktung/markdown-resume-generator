@@ -113,7 +113,7 @@ export default function Home() {
               markdown.
             </p>
             <Button asChild size="lg" className="text-base">
-              <Link href="/sign-up">
+              <Link href="/sign-in">
                 Create Your Resume
                 <FileText className="ml-2 h-4 w-4" />
               </Link>
