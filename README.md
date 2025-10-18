@@ -72,9 +72,20 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Deployment
 
-This application can be deployed on:
+This application is configured for deployment on [Cloudflare Pages](https://pages.cloudflare.com) with Cloudflare D1 database. Deployment to other platforms is not currently supported.
 
-- [Vercel](https://vercel.com) (recommended for Next.js)
-- [Cloudflare Pages](https://pages.cloudflare.com) (configured with `wrangler.jsonc`)
+### How to Deploy
+
+1. **Create D1 database**
+
+```bash
+npx wrangler d1 create markdown-resume
+```
+
+2. **Run database migration**
+
+```bash
+yarn db:migrate:remote
+```
 
 Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

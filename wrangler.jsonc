@@ -19,14 +19,8 @@
     {
       "binding": "DB",
       "database_name": "markdown-resume",
-      "database_id": "17ea1884-a7c1-4019-b03c-7eabedebe0fa",
+      "database_id": "72225bfa-f3d7-4d55-a213-94ad0ecbed7e",
       "migrations_dir": "./src/database/migrations",
-    },
-  ],
-  "kv_namespaces": [
-    {
-      "binding": "KV",
-      "id": "afabdd3b7ccd469c8ae146cfe6a1717a",
     },
   ],
   "browser": {
