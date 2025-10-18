@@ -9,8 +9,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 export default function SignIn() {
+  const { data: session } = useSession();
+  if (session) {
+    redirect("/documents");
+  }
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
       <Card className="w-full max-w-md">
