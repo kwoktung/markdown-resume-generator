@@ -43,7 +43,35 @@ pnpm install
 bun install
 ```
 
-3. Set up your environment variables (create a `.env.local` file)
+3. Set up your environment variables
+
+### Environment Configuration
+
+#### Development Environment
+
+Copy the example environment file to `.dev.vars`:
+
+```bash
+cp .env.example .dev.vars
+```
+
+Then update the values in `.dev.vars` with your development credentials.
+
+#### Production Environment
+
+1. Copy the example environment file to `.env`:
+
+```bash
+cp .env.example .env
+```
+
+2. Update the values in `.env` with your production credentials.
+
+3. Upload the environment variables to Cloudflare:
+
+```bash
+wrangler secret bulk .env
+```
 
 ### Development
 
