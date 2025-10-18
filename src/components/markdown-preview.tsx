@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { markdownToHtml } from "@/lib/markdown";
-import { getMarkdownBodyBackgroundColor } from "@/lib/color";
 import "github-markdown-css/github-markdown.css";
 
 interface MarkdownPreviewProps {
@@ -13,15 +12,25 @@ interface MarkdownPreviewProps {
 
 const useMarkdownBodyBackgroundColor = () => {
   const [bgColor, setBgColor] = useState<string>("transparent");
-  useEffect(() => {
-    const t = setTimeout(() => {
-      const color = getMarkdownBodyBackgroundColor();
-      setBgColor(color);
-    }, 100);
-    return () => clearTimeout(t);
+  const animationFrameRef = useRef<number | null>(null);
+
+  const markdownBodyRef = useCallback((node: HTMLDivElement | null) => {
+    // Cancel any pending animation frame
+    if (animationFrameRef.current !== null) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
+
+    if (node) {
+      // Use requestAnimationFrame to ensure styles are computed after paint
+      animationFrameRef.current = requestAnimationFrame(() => {
+        const styles = getComputedStyle(node);
+        const color = styles.getPropertyValue("--bgColor-default");
+        setBgColor(color || "transparent");
+      });
+    }
   }, []);
 
-  return bgColor;
+  return { bgColor, markdownBodyRef };
 };
 
 export function MarkdownPreview({
@@ -29,7 +38,7 @@ export function MarkdownPreview({
   className = "",
 }: MarkdownPreviewProps) {
   const { theme, resolvedTheme } = useTheme();
-  const bgColor = useMarkdownBodyBackgroundColor();
+  const { bgColor, markdownBodyRef } = useMarkdownBodyBackgroundColor();
   const html = useMemo(() => {
     return markdownToHtml(markdown);
   }, [markdown]);
@@ -52,6 +61,7 @@ export function MarkdownPreview({
     <div className={`h-full overflow-auto ${className}`}>
       <div className="p-6" style={{ backgroundColor: bgColor }}>
         <div
+          ref={markdownBodyRef}
           className="markdown-body"
           data-color-mode={isDark ? "dark" : "light"}
           data-dark-theme="dark"
