@@ -1,0 +1,23 @@
+# Code Owners for markdown-resume
+# These owners will be automatically requested for review when someone opens a pull request
+
+# Default owner for everything in the repo
+* @kwoktung
+
+# Database schema and migrations require careful review
+/src/database/ @kwoktung
+/src/database/migrations/ @kwoktung
+drizzle.config.ts @kwoktung
+
+# Authentication and security-related code
+/src/lib/auth/ @kwoktung
+/src/app/api/auth/ @kwoktung
+
+# Configuration files
+*.config.* @kwoktung
+wrangler.jsonc @kwoktung
+package.json @kwoktung
+
+# GitHub workflows and actions
+/.github/ @kwoktung
+
