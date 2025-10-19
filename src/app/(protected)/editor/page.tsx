@@ -9,6 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
+import {
   Save,
   Download,
   ArrowLeft,
@@ -17,7 +22,6 @@ import {
   Check,
   FileText,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { httpClient } from "@/lib/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAutoSave } from "./auto-save-context";
@@ -273,21 +277,27 @@ export default function EditorPage() {
       </header>
 
       {/* Editor and Preview */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Editor */}
-        <div
-          className={cn(
-            "border-r bg-card transition-all duration-300",
-            showPreview ? "w-1/2" : "w-full",
-          )}
-        >
-          <MarkdownEditor value={content} onChange={handleContentChange} />
-        </div>
-
-        {/* Preview */}
-        {showPreview && (
-          <div className="w-1/2 bg-card overflow-hidden">
-            <MarkdownPreview markdown={content} />
+      <div className="flex-1 overflow-hidden">
+        {showPreview ? (
+          <ResizablePanelGroup direction="horizontal" className="h-full">
+            <ResizablePanel defaultSize={50} minSize={30}>
+              <div className="h-full bg-card">
+                <MarkdownEditor
+                  value={content}
+                  onChange={handleContentChange}
+                />
+              </div>
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={50} minSize={30}>
+              <div className="h-full bg-card">
+                <MarkdownPreview markdown={content} />
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        ) : (
+          <div className="h-full bg-card">
+            <MarkdownEditor value={content} onChange={handleContentChange} />
           </div>
         )}
       </div>
