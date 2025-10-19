@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { MarkdownEditor } from "@/components/markdown-editor";
 import { MarkdownPreview } from "@/components/markdown-preview";
@@ -13,40 +13,53 @@ import {
   ResizablePanel,
   ResizableHandle,
 } from "@/components/ui/resizable";
-import {
-  Save,
-  Download,
-  ArrowLeft,
-  Eye,
-  Code,
-  Check,
-  FileText,
-} from "lucide-react";
+import { Save, ArrowLeft, Eye, Code, Check, FileText } from "lucide-react";
 import { httpClient } from "@/lib/client";
+import { useSession } from "next-auth/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAutoSave } from "./auto-save-context";
+import { ExportPdfButton } from "./export-pdf-button";
 
-export default function EditorPage() {
+const UNSAVED_DOCUMENT_KEY = "editor-unsaved-document";
+const DEFAULT_DOCUMENT_TITLE = "Untitled Document";
+const AUTO_SAVE_DELAY = 10000;
+
+function EditorContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
+  const { data: session } = useSession();
   const documentId = searchParams?.get("id");
   const { autoSaveEnabled, setAutoSaveEnabled } = useAutoSave();
-  const queryClient = useQueryClient();
-  const [title, setTitle] = useState("Untitled Document");
+  const [title, setTitle] = useState(DEFAULT_DOCUMENT_TITLE);
   const [content, setContent] = useState("");
+
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [showPreview, setShowPreview] = useState(true);
-  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const autosaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isLoadingRef = useRef(false);
 
-  // Load document if editing existing one
+  // Load document on mount
   useEffect(() => {
     if (documentId) {
+      // Load from server if we have an ID
       loadDocument(documentId);
+    } else {
+      // Load from sessionStorage if no ID (unsaved document)
+      try {
+        const saved = sessionStorage.getItem(UNSAVED_DOCUMENT_KEY);
+        if (saved) {
+          const { title: savedTitle, content: savedContent } =
+            JSON.parse(saved);
+          setTitle(savedTitle || DEFAULT_DOCUMENT_TITLE);
+          setContent(savedContent || "");
+        }
+      } catch (error) {
+        console.error("Error loading from sessionStorage:", error);
+      }
     }
   }, [documentId]);
 
@@ -67,6 +80,10 @@ export default function EditorPage() {
   };
 
   const handleSave = useCallback(async () => {
+    if (!session) {
+      router.push("/sign-in");
+      return;
+    }
     setIsSaving(true);
     try {
       if (documentId) {
@@ -82,6 +99,14 @@ export default function EditorPage() {
           content,
         });
         const { id } = response.data;
+
+        // Clear sessionStorage backup once saved to server
+        try {
+          sessionStorage.removeItem(UNSAVED_DOCUMENT_KEY);
+        } catch (error) {
+          console.error("Error clearing sessionStorage:", error);
+        }
+
         // Update URL with new document ID
         router.push(`/editor?id=${id}`);
       }
@@ -94,7 +119,21 @@ export default function EditorPage() {
     } finally {
       setIsSaving(false);
     }
-  }, [documentId, title, content, router, queryClient]);
+  }, [documentId, title, content, router, queryClient, session]);
+
+  // Save to sessionStorage for unsaved documents (prevent data loss on reload)
+  useEffect(() => {
+    if (!documentId && (title !== DEFAULT_DOCUMENT_TITLE || content !== "")) {
+      try {
+        sessionStorage.setItem(
+          UNSAVED_DOCUMENT_KEY,
+          JSON.stringify({ title, content }),
+        );
+      } catch (error) {
+        console.error("Error saving to sessionStorage:", error);
+      }
+    }
+  }, [documentId, title, content]);
 
   // Autosave effect - triggers 2 seconds after last change
   useEffect(() => {
@@ -115,7 +154,7 @@ export default function EditorPage() {
     // Set new timeout for autosave
     autosaveTimeoutRef.current = setTimeout(() => {
       handleSave();
-    }, 2000); // Autosave after 2 seconds of inactivity
+    }, AUTO_SAVE_DELAY); // Autosave after AUTO_SAVE_DELAY milliseconds of inactivity
 
     return () => {
       if (autosaveTimeoutRef.current) {
@@ -133,39 +172,6 @@ export default function EditorPage() {
     setContent(newContent);
     setHasUnsavedChanges(true);
   };
-
-  const handleExportPdf = useCallback(async () => {
-    if (!documentId) {
-      alert("Please save the document first");
-      return;
-    }
-
-    setIsGeneratingPdf(true);
-    try {
-      const response = await httpClient.post(
-        `/api/services/document/${documentId}/pdf`,
-        {},
-        {
-          responseType: "blob",
-        },
-      );
-
-      // Create download link
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `${title.replace(/[^a-z0-9]/gi, "_")}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-      alert("Failed to generate PDF");
-    } finally {
-      setIsGeneratingPdf(false);
-    }
-  }, [documentId, title]);
 
   const togglePreview = () => {
     setShowPreview(!showPreview);
@@ -262,16 +268,13 @@ export default function EditorPage() {
               Save
             </Button>
 
-            <Button
-              onClick={handleExportPdf}
-              disabled={!documentId || isGeneratingPdf}
+            <ExportPdfButton
+              documentId={documentId}
+              title={title}
               variant="outline"
               size="sm"
               className="shrink-0"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              {isGeneratingPdf ? "Generating..." : "Export PDF"}
-            </Button>
+            />
           </div>
         </div>
       </header>
@@ -302,5 +305,13 @@ export default function EditorPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function EditorPage() {
+  return (
+    <Suspense fallback={null}>
+      <EditorContent />
+    </Suspense>
   );
 }

@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { getNextAuthSessionAsync } from "@/lib/auth";
-import { AutoSaveProvider } from "@/app/(protected)/editor/auto-save-context";
 
 export default async function DashboardLayout({
   children,
@@ -11,5 +10,5 @@ export default async function DashboardLayout({
   if (!session) {
     redirect("/sign-in");
   }
-  return <AutoSaveProvider>{children}</AutoSaveProvider>;
+  return <>{children}</>;
 }

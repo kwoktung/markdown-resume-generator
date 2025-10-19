@@ -11,15 +11,15 @@ const AutoSaveContext = createContext<AutoSaveContextType | undefined>(
   undefined,
 );
 
-type AutoSaveProviderProps = {
+type EditorAutoSaveProviderProps = {
   children: React.ReactNode;
   persistKey?: string;
 };
 
-export function AutoSaveProvider({
+export function EditorAutoSaveProvider({
   children,
   persistKey = "editor-auto-save-enabled",
-}: AutoSaveProviderProps) {
+}: EditorAutoSaveProviderProps) {
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
   const [mounted, setMounted] = useState(false);
 

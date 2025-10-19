@@ -113,7 +113,7 @@ export default function Home() {
               markdown.
             </p>
             <Button asChild size="lg" className="text-base">
-              <Link href="/sign-in">
+              <Link href="/editor">
                 Create Your Resume
                 <FileText className="ml-2 h-4 w-4" />
               </Link>
@@ -134,12 +134,6 @@ export default function Home() {
               className="text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               Documents
-            </Link>
-            <Link
-              href="/plans"
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Plans
             </Link>
             <Link
               href="/dashboard"
