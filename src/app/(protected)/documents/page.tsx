@@ -31,7 +31,7 @@ import {
   Copy,
   LogOut,
 } from "lucide-react";
-import axios from "axios";
+import { httpClient } from "@/lib/client";
 
 import { DocumentLoadingState } from "./loading-state";
 import { DocumentErrorState } from "./error-state";
@@ -64,7 +64,7 @@ const Dashboard = () => {
   const { data, isLoading, error } = useQuery<DocumentListResponse>({
     queryKey: ["documents"],
     queryFn: async () => {
-      const response = await axios.get("/api/services/document");
+      const response = await httpClient.get("/api/services/document");
       return response.data;
     },
   });
@@ -72,7 +72,7 @@ const Dashboard = () => {
   // Delete document mutation
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await axios.delete(`/api/services/document/${id}`);
+      const response = await httpClient.delete(`/api/services/document/${id}`);
       return response.data;
     },
     onSuccess: () => {
@@ -85,7 +85,7 @@ const Dashboard = () => {
   // Duplicate document mutation
   const duplicateMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await axios.post(
+      const response = await httpClient.post(
         `/api/services/document/${id}/duplicate`,
       );
       return response.data;
