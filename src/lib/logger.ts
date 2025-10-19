@@ -48,7 +48,7 @@ class CloudflareLogger implements Logger {
 
   debug(message: string, meta?: LogMetadata): void {
     if (this.shouldLog("debug")) {
-      console.log(this.formatMessage("debug", message, meta));
+      console.debug(this.formatMessage("debug", message, meta));
     }
   }
 
