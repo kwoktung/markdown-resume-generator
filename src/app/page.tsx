@@ -129,17 +129,23 @@ export default function Home() {
             © {new Date().getFullYear()} Markdown Resume. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
-            <Link
-              href="/documents"
+            <a
+              href="mailto:onlyif2009@gmail.com"
               className="text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
-              Documents
+              Email
+            </a>
+            <Link
+              href="/privacy"
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Privacy Policy
             </Link>
             <Link
-              href="/dashboard"
+              href="/terms"
               className="text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
-              Dashboard
+              Terms of Service
             </Link>
           </div>
         </div>
