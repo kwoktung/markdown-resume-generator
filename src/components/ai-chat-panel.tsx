@@ -12,7 +12,6 @@ import {
   Bot,
   Copy,
   Check,
-  ChevronDown,
 } from "lucide-react";
 import { httpClient } from "@/lib/client";
 import { useClickOutside } from "@/hooks/useClickOutside";
@@ -277,7 +276,6 @@ export function AiChatPanel({
 
 function MessageBubble({
   message,
-  onInsertText,
 }: {
   message: Message;
   onInsertText: (text: string) => void;
@@ -288,10 +286,6 @@ function MessageBubble({
     navigator.clipboard.writeText(message.content);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleInsert = () => {
-    onInsertText(message.content);
   };
 
   if (message.role === "user") {
@@ -335,15 +329,6 @@ function MessageBubble({
                   Copy
                 </>
               )}
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleInsert}
-              className="h-7 text-xs"
-            >
-              <ChevronDown className="h-3 w-3 mr-1" />
-              Insert into Resume
             </Button>
           </div>
         )}
