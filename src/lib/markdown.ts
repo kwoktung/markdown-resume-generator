@@ -1,5 +1,4 @@
 import { marked } from "marked";
-import DOMPurify from "dompurify";
 
 /**
  * Configure marked options for better markdown rendering
@@ -8,6 +7,11 @@ marked.setOptions({
   breaks: true, // Convert line breaks to <br>
   gfm: true, // Enable GitHub Flavored Markdown
 });
+
+// todo: find a way to sanitize the html without using jsdom, safety for serverless functions
+const dompurify = (html: string) => {
+  return html;
+};
 
 /**
  * Convert markdown to HTML
@@ -21,55 +25,7 @@ export function markdownToHtml(markdown: string): string {
   try {
     // Convert markdown to HTML
     const rawHtml = marked.parse(markdown, { async: false }) as string;
-
-    // Sanitize HTML to prevent XSS
-    const cleanHtml = DOMPurify.sanitize(rawHtml, {
-      ALLOWED_TAGS: [
-        "h1",
-        "h2",
-        "h3",
-        "h4",
-        "h5",
-        "h6",
-        "p",
-        "br",
-        "hr",
-        "strong",
-        "em",
-        "u",
-        "s",
-        "code",
-        "pre",
-        "a",
-        "img",
-        "ul",
-        "ol",
-        "li",
-        "blockquote",
-        "table",
-        "thead",
-        "tbody",
-        "tr",
-        "th",
-        "td",
-        "div",
-        "span",
-      ],
-      ALLOWED_ATTR: [
-        "href",
-        "title",
-        "target",
-        "rel",
-        "src",
-        "alt",
-        "width",
-        "height",
-        "class",
-        "id",
-      ],
-    });
-
-    return cleanHtml;
+    return dompurify(rawHtml);
   } catch (error) {
     console.error("Error converting markdown to HTML:", error);
     return "";

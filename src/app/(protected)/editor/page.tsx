@@ -18,7 +18,8 @@ import {
   FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import axios from "axios";
+import { httpClient } from "@/lib/client";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAutoSave } from "./auto-save-context";
 
 export default function EditorPage() {
@@ -26,7 +27,7 @@ export default function EditorPage() {
   const searchParams = useSearchParams();
   const documentId = searchParams?.get("id");
   const { autoSaveEnabled, setAutoSaveEnabled } = useAutoSave();
-
+  const queryClient = useQueryClient();
   const [title, setTitle] = useState("Untitled Document");
   const [content, setContent] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -48,7 +49,7 @@ export default function EditorPage() {
   const loadDocument = async (id: string) => {
     try {
       isLoadingRef.current = true;
-      const response = await axios.get(`/api/services/document/${id}`);
+      const response = await httpClient.get(`/api/services/document/${id}`);
       const { document } = response.data;
       setTitle(document.title);
       setContent(document.content);
@@ -66,13 +67,13 @@ export default function EditorPage() {
     try {
       if (documentId) {
         // Update existing document
-        await axios.put(`/api/services/document/${documentId}`, {
+        await httpClient.put(`/api/services/document/${documentId}`, {
           title,
           content,
         });
       } else {
         // Create new document
-        const response = await axios.post("/api/services/document", {
+        const response = await httpClient.post("/api/services/document", {
           title,
           content,
         });
@@ -82,13 +83,14 @@ export default function EditorPage() {
       }
       setLastSaved(new Date());
       setHasUnsavedChanges(false);
+      queryClient.invalidateQueries({ queryKey: ["documents"] });
     } catch (error) {
       console.error("Error saving document:", error);
       alert("Failed to save document");
     } finally {
       setIsSaving(false);
     }
-  }, [documentId, title, content, router]);
+  }, [documentId, title, content, router, queryClient]);
 
   // Autosave effect - triggers 2 seconds after last change
   useEffect(() => {
@@ -136,7 +138,7 @@ export default function EditorPage() {
 
     setIsGeneratingPdf(true);
     try {
-      const response = await axios.post(
+      const response = await httpClient.post(
         `/api/services/document/${documentId}/pdf`,
         {},
         {
