@@ -19,6 +19,8 @@ import { useSession } from "next-auth/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAutoSave } from "./auto-save-context";
 import { ExportPdfButton } from "./export-pdf-button";
+import { AiChatPanel } from "@/components/ai-chat-panel";
+import { AiChatButton } from "@/components/ai-chat-button";
 
 const UNSAVED_DOCUMENT_KEY = "editor-unsaved-document";
 const DEFAULT_DOCUMENT_TITLE = "Untitled Document";
@@ -38,6 +40,7 @@ function EditorContent() {
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [showPreview, setShowPreview] = useState(true);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const autosaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isLoadingRef = useRef(false);
@@ -177,6 +180,13 @@ function EditorContent() {
     setShowPreview(!showPreview);
   };
 
+  const handleInsertText = (text: string) => {
+    // Insert AI-generated text at the end of the current content
+    const newContent = content + "\n\n" + text;
+    setContent(newContent);
+    setHasUnsavedChanges(true);
+  };
+
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Header */}
@@ -185,7 +195,7 @@ function EditorContent() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => router.push("/documents")}
+            onClick={() => router.back()}
             className="shrink-0"
             title="Back to documents"
           >
@@ -304,6 +314,23 @@ function EditorContent() {
           </div>
         )}
       </div>
+
+      {/* AI Chat Components - Only show for logged-in users */}
+      {session && (
+        <>
+          <AiChatButton
+            onClick={() => setIsChatOpen(!isChatOpen)}
+            isOpen={isChatOpen}
+          />
+          <AiChatPanel
+            isOpen={isChatOpen}
+            onClose={() => setIsChatOpen(false)}
+            currentContent={content}
+            onInsertText={handleInsertText}
+            documentTitle={title}
+          />
+        </>
+      )}
     </div>
   );
 }

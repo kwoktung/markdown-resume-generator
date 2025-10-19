@@ -26,6 +26,9 @@
   "browser": {
     "binding": "BROWSER",
   },
+  "ai": {
+    "binding": "AI",
+  },
   "dev": {
     "port": 4000,
   },

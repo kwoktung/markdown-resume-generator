@@ -5,6 +5,11 @@ A modern web application for creating and managing professional resumes using Ma
 ## Features
 
 - **Markdown Editor**: Write your resume in Markdown with real-time preview
+- **🤖 AI Resume Assistant**: Get intelligent help with writing and improving your resume (for logged-in users)
+  - Context-aware suggestions based on your resume content
+  - Quick actions for common tasks (improve summary, enhance experience, add metrics)
+  - Direct text insertion into your resume
+  - Powered by Cloudflare AI Workers
 - **Authentication**: Secure user authentication with NextAuth.js
 - **Document Management**: Create, edit, and manage multiple resume documents
 - **PDF Export**: Convert your markdown resume to PDF format
@@ -147,6 +152,29 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - `/src/lib` - Utility functions and helpers
 - `/src/services` - Business logic and service layer
 - `/src/types` - TypeScript type definitions
+
+## AI Chatbox Feature
+
+This application includes an AI-powered chatbox to assist users with resume writing. The AI assistant appears as a floating button in the editor and provides:
+
+- Intelligent suggestions for improving resume content
+- Help with writing professional summaries, job descriptions, and achievements
+- Grammar and tone improvements
+- Format and structure recommendations
+
+### Setup AI Feature
+
+The AI feature is automatically enabled when you deploy to Cloudflare. It uses Cloudflare AI Workers (Llama 3.1 8B model) which offers:
+
+- 10,000 free requests per day
+- Low latency edge inference
+- No additional API keys required
+
+For detailed information about the AI chatbox system, see:
+
+- [AI_CHATBOX_GUIDE.md](./AI_CHATBOX_GUIDE.md) - Comprehensive setup and usage guide
+- [AI_ARCHITECTURE.md](./AI_ARCHITECTURE.md) - System architecture and data flow
+- [AI_UI_DESIGN.md](./AI_UI_DESIGN.md) - UI design specifications
 
 ## Deployment
 

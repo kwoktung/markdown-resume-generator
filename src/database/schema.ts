@@ -85,3 +85,26 @@ export const documentTable = sqliteTable(
     ];
   },
 );
+
+// AI Chat conversations table
+export const chatConversationTable = sqliteTable(
+  "chat_conversations",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id").notNull(),
+    documentId: integer("document_id"), // Optional: link to specific document
+    title: text("title").notNull().default("New Conversation"),
+    createdAt: integer("created_at", { mode: "timestamp" }).default(
+      sql`(unixepoch())`,
+    ),
+    updatedAt: integer("updated_at", { mode: "timestamp" }).default(
+      sql`(unixepoch())`,
+    ),
+  },
+  (table) => {
+    return [
+      index("chat_conversations_userId_idx").on(table.userId),
+      index("chat_conversations_documentId_idx").on(table.documentId),
+    ];
+  },
+);
