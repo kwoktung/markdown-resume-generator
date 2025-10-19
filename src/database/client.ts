@@ -6,8 +6,8 @@ import {
   verificationTokenTable,
   documentTable,
 } from "./schema";
-import { Logger } from "drizzle-orm/logger";
-import { getLogger } from "@/lib/logger";
+import { Logger as DrizzleLoggerInterface } from "drizzle-orm/logger";
+import { getLogger, type Logger } from "@/lib/logger";
 
 const formatSqlQuery = (query: { sql: string; params: unknown[] }) => {
   return query.sql.replace(/\$\d+/g, (match: string) => {
@@ -16,8 +16,8 @@ const formatSqlQuery = (query: { sql: string; params: unknown[] }) => {
   });
 };
 
-class DrizzleLogger implements Logger {
-  private readonly logger: ReturnType<typeof getLogger>;
+class DrizzleLogger implements DrizzleLoggerInterface {
+  private readonly logger: Logger;
   constructor(readonly env: CloudflareEnv) {
     this.logger = getLogger(env);
   }

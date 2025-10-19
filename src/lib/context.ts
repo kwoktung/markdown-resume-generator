@@ -1,7 +1,5 @@
 import { createDatabaseClient, type DatabaseClient } from "@/database/client";
-import { getLogger } from "./logger";
-
-type Logger = ReturnType<typeof getLogger>;
+import { getLogger, type Logger } from "./logger";
 
 export type Context = {
   env: CloudflareEnv;
