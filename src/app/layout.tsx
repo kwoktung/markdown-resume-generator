@@ -5,6 +5,7 @@ import "./github-markdown-css.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { QueryProvider } from "@/components/query-provider";
 import { SessionProvider } from "next-auth/react";
+import { EditorAutoSaveProvider } from "@/app/editor/auto-save-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,7 +39,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <QueryProvider>
-            <SessionProvider>{children}</SessionProvider>
+            <SessionProvider>
+              <EditorAutoSaveProvider>{children}</EditorAutoSaveProvider>
+            </SessionProvider>
           </QueryProvider>
         </ThemeProvider>
       </body>
