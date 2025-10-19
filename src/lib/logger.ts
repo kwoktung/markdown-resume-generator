@@ -54,7 +54,7 @@ class CloudflareLogger implements Logger {
 
   info(message: string, meta?: LogMetadata): void {
     if (this.shouldLog("info")) {
-      console.log(this.formatMessage("info", message, meta));
+      console.info(this.formatMessage("info", message, meta));
     }
   }
 
