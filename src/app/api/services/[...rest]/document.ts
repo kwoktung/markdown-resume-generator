@@ -100,6 +100,9 @@ const createDocument = createRoute({
     401: {
       description: "Unauthorized - User not authenticated",
     },
+    403: {
+      description: "Forbidden - Maximum document limit reached",
+    },
   },
 });
 
@@ -319,6 +322,15 @@ documentApp.openapi(createDocument, async (c) => {
 
   const ctx = createContext(getCloudflareContext({ async: false }).env);
   const services = new Services(ctx);
+
+  // Check if user has reached the maximum document limit
+  const documentCount = await services.document.getDocumentsCount(
+    session.user.id,
+  );
+  if (documentCount >= 50) {
+    return c.json({ error: "Maximum document limit of 50 reached" }, 403);
+  }
+
   const document = await services.document.createDocument({
     title: body.title,
     content: body.content,

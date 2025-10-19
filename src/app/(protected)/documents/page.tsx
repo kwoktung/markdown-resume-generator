@@ -30,6 +30,8 @@ import {
   Loader2,
   Copy,
   LogOut,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { httpClient } from "@/lib/client";
 
@@ -52,9 +54,12 @@ interface DocumentListResponse {
   total: number;
 }
 
+const limit = 10;
+
 const Dashboard = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [offset, setOffset] = useState(0);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(
     null,
@@ -62,9 +67,14 @@ const Dashboard = () => {
 
   // Fetch documents
   const { data, isLoading, error } = useQuery<DocumentListResponse>({
-    queryKey: ["documents"],
+    queryKey: ["documents", limit, offset],
     queryFn: async () => {
-      const response = await httpClient.get("/api/services/document");
+      const response = await httpClient.get("/api/services/document", {
+        params: {
+          limit,
+          offset,
+        },
+      });
       return response.data;
     },
   });
@@ -117,6 +127,23 @@ const Dashboard = () => {
       month: "short",
       day: "numeric",
     });
+  };
+
+  // Pagination helpers
+  const totalPages = data ? Math.ceil(data.total / limit) : 0;
+  const currentPage = Math.floor(offset / limit) + 1;
+  const showPagination = data && data.total > limit;
+
+  const handlePreviousPage = () => {
+    if (offset > 0) {
+      setOffset(Math.max(0, offset - limit));
+    }
+  };
+
+  const handleNextPage = () => {
+    if (data && offset + limit < data.total) {
+      setOffset(offset + limit);
+    }
   };
 
   return (
@@ -245,6 +272,42 @@ const Dashboard = () => {
                 </TableBody>
               </Table>
             </div>
+
+            {/* Pagination */}
+            {showPagination && (
+              <div className="flex items-center justify-between px-2 py-4">
+                <div className="text-sm text-muted-foreground">
+                  Showing {offset + 1} to {Math.min(offset + limit, data.total)}{" "}
+                  of {data.total} documents
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handlePreviousPage}
+                    disabled={offset === 0 || isLoading}
+                    className="gap-1"
+                  >
+                    <ChevronLeft className="size-4" />
+                    Previous
+                  </Button>
+                  <div className="text-sm font-medium">
+                    Page {currentPage} of {totalPages}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleNextPage}
+                    disabled={offset + limit >= data.total || isLoading}
+                    className="gap-1"
+                  >
+                    Next
+                    <ChevronRight className="size-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+
             {/* Delete Confirmation Dialog */}
             <AlertDialog
               open={deleteDialogOpen}
