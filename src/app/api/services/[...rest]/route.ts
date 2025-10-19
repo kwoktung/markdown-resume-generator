@@ -2,18 +2,27 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { Scalar } from "@scalar/hono-api-reference";
 
 import documentApp from "./document";
+import aiApp from "./ai";
 
 const basePath = "/api/services";
 
 const app = new OpenAPIHono().basePath(basePath);
 
 app.route("/document", documentApp);
+app.route("/ai/chat", aiApp);
 app.doc31("/docs", {
   openapi: "3.1.0",
   info: {
     title: "Markdown Resume API",
     version: "1.0.0",
+    description: "API for managing markdown resumes with AI-powered assistance",
   },
+  servers: [
+    {
+      url: basePath,
+      description: "API Server",
+    },
+  ],
 });
 app.get(
   "/scalar",

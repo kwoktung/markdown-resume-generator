@@ -10,6 +10,7 @@ declare namespace Cloudflare {
     DB: D1Database;
     BROWSER: Fetcher;
     ASSETS: Fetcher;
+    AI: any; // Cloudflare AI binding for LLM inference
   }
 }
 interface CloudflareEnv extends Cloudflare.Env {}
