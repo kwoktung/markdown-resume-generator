@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { markdownToHtml } from "@/lib/markdown";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import "github-markdown-css/github-markdown.css";
 
 interface MarkdownPreviewProps {
@@ -58,7 +59,7 @@ export function MarkdownPreview({
   }
 
   return (
-    <div className={`h-full overflow-auto ${className}`}>
+    <ScrollArea className={`h-full ${className}`}>
       <div className="p-6" style={{ backgroundColor: bgColor }}>
         <div
           ref={markdownBodyRef}
@@ -69,6 +70,6 @@ export function MarkdownPreview({
           dangerouslySetInnerHTML={{ __html: html }}
         />
       </div>
-    </div>
+    </ScrollArea>
   );
 }

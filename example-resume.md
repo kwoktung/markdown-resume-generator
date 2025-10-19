@@ -4,11 +4,9 @@
 
 📧 john.doe@email.com | 📱 +1 (555) 123-4567 | 🔗 [linkedin.com/in/johndoe](https://linkedin.com) | 💻 [github.com/johndoe](https://github.com)
 
-
 ## Summary
 
 Experienced Full Stack Software Engineer with 5+ years of expertise in building scalable web applications. Proficient in modern JavaScript frameworks, cloud infrastructure, and serverless architectures. Passionate about creating elegant solutions to complex problems.
-
 
 ## Technical Skills
 
@@ -23,7 +21,6 @@ Experienced Full Stack Software Engineer with 5+ years of expertise in building 
 **Cloud & DevOps:** AWS, Cloudflare Workers, Docker, Kubernetes, CI/CD, GitHub Actions
 
 **Tools:** Git, VS Code, Postman, Figma, Jira, Slack
-
 
 ## Professional Experience
 
@@ -96,13 +93,11 @@ _Graduated: May 2019_
 - Relevant Coursework: Data Structures, Algorithms, Database Systems, Web Development, Operating Systems
 - Dean's List: 2017, 2018, 2019
 
-
 ## Certifications
 
 - **AWS Certified Solutions Architect - Associate** | Amazon Web Services | 2023
 - **Professional Scrum Master I (PSM I)** | Scrum.org | 2022
 - **MongoDB Certified Developer** | MongoDB University | 2021
-
 
 ## Awards & Recognition
 
@@ -110,17 +105,14 @@ _Graduated: May 2019_
 - **Best Innovation Award** - Internal Hackathon Winner | 2022
 - **Open Source Contributor** - 500+ contributions on GitHub | 2019-2024
 
-
 ## Languages
 
 - **English:** Native
 - **Spanish:** Intermediate
 - **Mandarin:** Basic
 
-
 ## Interests
 
 When I'm not coding, I enjoy hiking, photography, contributing to open-source projects, and writing technical blog posts about web development and serverless architectures.
-
 
 _References available upon request_
