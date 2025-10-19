@@ -4,7 +4,6 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { markdownToHtml } from "@/lib/markdown";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import "github-markdown-css/github-markdown.css";
 
 interface MarkdownPreviewProps {
   markdown: string;
@@ -64,9 +63,7 @@ export function MarkdownPreview({
         <div
           ref={markdownBodyRef}
           className="markdown-body"
-          data-color-mode={isDark ? "dark" : "light"}
-          data-dark-theme="dark"
-          data-light-theme="light"
+          data-theme={isDark ? "dark" : "light"}
           dangerouslySetInnerHTML={{ __html: html }}
         />
       </div>

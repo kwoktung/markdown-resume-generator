@@ -30,9 +30,7 @@ const Logout = () => {
               className={`
                 rounded-full p-4 transition-all duration-500
                 ${
-                  status === "logging-out"
-                    ? "bg-muted/50"
-                    : "bg-emerald-500/10"
+                  status === "logging-out" ? "bg-muted/50" : "bg-emerald-500/10"
                 }
               `}
             >
