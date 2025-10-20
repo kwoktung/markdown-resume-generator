@@ -1,0 +1,51 @@
+{
+  "name": "Markdown Resume Generator",
+  "short_name": "MD Resume",
+  "description": "Create beautiful, professional resumes with Markdown. Free online resume builder with real-time preview, PDF export, and AI-powered assistance.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "categories": ["productivity", "business", "utilities"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Create New Resume",
+      "short_name": "New Resume",
+      "description": "Start creating a new resume",
+      "url": "/documents",
+      "icons": []
+    },
+    {
+      "name": "Open Editor",
+      "short_name": "Editor",
+      "description": "Open the resume editor",
+      "url": "/editor",
+      "icons": []
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "features": [
+    "Markdown editing",
+    "Real-time preview",
+    "PDF export",
+    "AI assistance",
+    "Auto-save"
+  ],
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}
