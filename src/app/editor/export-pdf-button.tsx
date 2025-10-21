@@ -1,8 +1,14 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Progress } from "@/components/ui/progress";
+import { Download, FileText } from "lucide-react";
 import { httpClient } from "@/lib/client";
 
 interface ExportPdfButtonProps {
@@ -29,6 +35,19 @@ export function ExportPdfButton({
   className,
 }: ExportPdfButtonProps) {
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
+    null,
+  );
+
+  // Cleanup interval on unmount
+  useEffect(() => {
+    return () => {
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
+    };
+  }, []);
 
   const handleExportPdf = useCallback(async () => {
     if (!documentId) {
@@ -37,7 +56,17 @@ export function ExportPdfButton({
     }
 
     setIsGeneratingPdf(true);
+    setProgress(0);
+
     try {
+      // Simulate progress updates
+      progressIntervalRef.current = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 90) return prev;
+          return Math.min(prev + Math.random() * 20, 90);
+        });
+      }, 200);
+
       const response = await httpClient.post(
         `/api/services/document/${documentId}/pdf`,
         {},
@@ -46,11 +75,17 @@ export function ExportPdfButton({
         },
       );
 
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
+      }
+      setProgress(100);
+
       // Create download link
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `${title.replace(/[^a-z0-9]/gi, "_")}.pdf`);
+      link.setAttribute("download", `${title.replace(/\s+/gi, "_")}.pdf`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -59,20 +94,53 @@ export function ExportPdfButton({
       console.error("Error generating PDF:", error);
       alert("Failed to generate PDF");
     } finally {
+      // Clear interval in all cases (success or error)
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
+      }
       setIsGeneratingPdf(false);
+      setProgress(0);
     }
   }, [documentId, title]);
 
   return (
-    <Button
-      onClick={handleExportPdf}
-      disabled={!documentId || isGeneratingPdf || disabled}
-      variant={variant}
-      size={size}
-      className={className}
-    >
-      <Download className="h-4 w-4 mr-2" />
-      {isGeneratingPdf ? "Generating..." : "Export PDF"}
-    </Button>
+    <Popover open={isGeneratingPdf}>
+      <PopoverTrigger asChild>
+        <Button
+          onClick={handleExportPdf}
+          disabled={!documentId || disabled || isGeneratingPdf}
+          variant={variant}
+          size={size}
+          className={className}
+        >
+          <Download className="h-4 w-4 mr-2" />
+          {isGeneratingPdf ? "Generating..." : "Export PDF"}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-80 p-6" align="center">
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+              <FileText className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-sm">Generating PDF</h3>
+              <p className="text-xs text-muted-foreground">
+                Please wait while we prepare your document...
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Progress</span>
+              <span>{Math.round(progress)}%</span>
+            </div>
+            <Progress value={progress} className="h-2" />
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }

@@ -124,6 +124,14 @@ function EditorContent() {
     }
   }, [documentId, title, content, router, queryClient, session]);
 
+  // Create ref for handleSave to avoid dependency issues
+  const handleSaveRef = useRef(handleSave);
+
+  // Keep ref in sync with handleSave
+  useEffect(() => {
+    handleSaveRef.current = handleSave;
+  }, [handleSave]);
+
   // Save to sessionStorage for unsaved documents (prevent data loss on reload)
   useEffect(() => {
     if (!documentId && (title !== DEFAULT_DOCUMENT_TITLE || content !== "")) {
@@ -156,7 +164,7 @@ function EditorContent() {
 
     // Set new timeout for autosave
     autosaveTimeoutRef.current = setTimeout(() => {
-      handleSave();
+      handleSaveRef.current();
     }, AUTO_SAVE_DELAY); // Autosave after AUTO_SAVE_DELAY milliseconds of inactivity
 
     return () => {
@@ -164,7 +172,7 @@ function EditorContent() {
         clearTimeout(autosaveTimeoutRef.current);
       }
     };
-  }, [autoSaveEnabled, hasUnsavedChanges, documentId, handleSave]);
+  }, [autoSaveEnabled, hasUnsavedChanges, documentId]);
 
   const handleTitleChange = (newTitle: string) => {
     setTitle(newTitle);
@@ -193,7 +201,7 @@ function EditorContent() {
       // Check for Ctrl+S (Windows/Linux) or Cmd+S (Mac)
       if ((event.ctrlKey || event.metaKey) && event.key === "s") {
         event.preventDefault(); // Prevent browser's default save dialog
-        handleSave();
+        handleSaveRef.current();
       }
     };
 
@@ -204,7 +212,7 @@ function EditorContent() {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [handleSave]);
+  }, []);
 
   return (
     <div className="h-screen flex flex-col bg-background">
@@ -227,7 +235,7 @@ function EditorContent() {
               type="text"
               value={title}
               onChange={(e) => handleTitleChange(e.target.value)}
-              className="border-none shadow-none text-lg font-semibold h-auto py-0 px-0 focus-visible:ring-0 bg-transparent"
+              className="border-none shadow-none text-lg font-semibold h-auto py-0 px-0 focus-visible:ring-0 bg-transparent rounded-none"
               placeholder="Untitled Document"
             />
           </div>
