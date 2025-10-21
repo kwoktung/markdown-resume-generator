@@ -77,7 +77,7 @@ export function getStyledHtmlDocument(
 
     p { margin-top: 0; margin-bottom: 10px; }
 
-    a { color: #0969da; text-decoration: none; }
+    a { color: #000; text-decoration: none; }
     a:hover { text-decoration: underline; }
 
     code {

@@ -187,6 +187,25 @@ function EditorContent() {
     setHasUnsavedChanges(true);
   };
 
+  // Keyboard shortcut handler
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check for Ctrl+S (Windows/Linux) or Cmd+S (Mac)
+      if ((event.ctrlKey || event.metaKey) && event.key === "s") {
+        event.preventDefault(); // Prevent browser's default save dialog
+        handleSave();
+      }
+    };
+
+    // Add event listener
+    document.addEventListener("keydown", handleKeyDown);
+
+    // Cleanup
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleSave]);
+
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Header */}
@@ -273,6 +292,7 @@ function EditorContent() {
               disabled={isSaving || !hasUnsavedChanges}
               size="sm"
               className="shrink-0"
+              title="Save document (Ctrl+S / Cmd+S)"
             >
               <Save className="h-4 w-4 mr-2" />
               Save
