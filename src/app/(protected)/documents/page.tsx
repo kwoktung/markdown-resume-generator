@@ -38,6 +38,8 @@ import { httpClient } from "@/lib/client";
 import { DocumentLoadingState } from "./loading-state";
 import { DocumentErrorState } from "./error-state";
 import { DocumentEmptyState } from "./empty-state";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { ClientOnly } from "@/components/client-only";
 
 interface Document {
   id: number;
@@ -161,6 +163,9 @@ const Dashboard = () => {
               </p>
             </div>
             <div className="flex gap-2">
+              <ClientOnly>
+                <ThemeToggle />
+              </ClientOnly>
               <Button
                 size="lg"
                 variant="outline"
@@ -168,7 +173,6 @@ const Dashboard = () => {
                 onClick={() => router.push("/sign-out")}
               >
                 <LogOut className="size-5" />
-                Logout
               </Button>
               <Button
                 size="lg"

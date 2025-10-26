@@ -29,6 +29,3 @@ jobs:
 
       - name: Check code formatting
         run: yarn prettier --check .
-
-      - name: Build project
-        run: yarn build

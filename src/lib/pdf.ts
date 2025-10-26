@@ -1,5 +1,5 @@
 import puppeteer, { type Browser, BrowserWorker } from "@cloudflare/puppeteer";
-import { getStyledHtmlDocument } from "./markdown";
+import { getStyledHtmlDocument, markdownToHtml } from "./markdown";
 
 /**
  * PDF generation options
@@ -133,4 +133,46 @@ export function getPdfHeaders(filename: string): Record<string, string> {
     Pragma: "no-cache",
     Expires: "0",
   };
+}
+
+/**
+ * Generate PDF Response from markdown content
+ * This is a high-level utility that combines all PDF generation steps
+ * @param browserBinding - Cloudflare Browser binding from env.BROWSER
+ * @param title - Document title
+ * @param markdownContent - Markdown content to convert
+ * @param options - PDF generation options
+ * @returns Response object with PDF
+ * @throws Error if browser binding is not available or PDF generation fails
+ */
+export async function generatePdfResponse(
+  browserBinding: BrowserWorker | undefined,
+  title: string,
+  markdownContent: string,
+  options: PdfOptions = {},
+): Promise<Response> {
+  // Check browser binding availability
+  if (!browserBinding) {
+    throw new Error("Browser rendering not available");
+  }
+
+  // Convert markdown to HTML
+  const html = markdownToHtml(markdownContent);
+
+  // Generate PDF
+  const pdfBuffer = await generatePdfFromMarkdown(
+    browserBinding,
+    html,
+    title,
+    options,
+  );
+
+  // Get PDF filename and headers
+  const filename = getPdfFilename(title);
+  const headers = getPdfHeaders(filename);
+
+  // Return PDF Response
+  return new Response(Buffer.from(pdfBuffer), {
+    headers,
+  });
 }

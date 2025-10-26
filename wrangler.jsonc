@@ -29,6 +29,16 @@
   "ai": {
     "binding": "AI",
   },
+  "ratelimits": [
+    {
+      "name": "PDF_EXPORT_RATE_LIMITER",
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 2,
+        "period": 60,
+      },
+    },
+  ],
   "dev": {
     "port": 4000,
   },

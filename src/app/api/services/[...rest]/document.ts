@@ -4,12 +4,6 @@ import { createContext } from "@/lib/context";
 import { Services } from "@/services";
 import { HttpResponse } from "@/lib/response";
 import { getNextAuthSessionAsync } from "@/lib/auth";
-import { markdownToHtml } from "@/lib/markdown";
-import {
-  generatePdfFromMarkdown,
-  getPdfFilename,
-  getPdfHeaders,
-} from "@/lib/pdf";
 
 const createDocumentSchema = z.object({
   title: z.string().min(1).openapi({
@@ -271,35 +265,6 @@ const duplicateDocument = createRoute({
   },
 });
 
-const generatePdf = createRoute({
-  method: "post",
-  path: "/{id}/pdf",
-  request: {
-    params: z.object({
-      id: z.string().transform((val) => parseInt(val, 10)),
-    }),
-  },
-  responses: {
-    200: {
-      description: "PDF file generated successfully",
-      content: {
-        "application/pdf": {
-          schema: z.any(),
-        },
-      },
-    },
-    401: {
-      description: "Unauthorized - User not authenticated",
-    },
-    404: {
-      description: "Document not found",
-    },
-    500: {
-      description: "Failed to generate PDF",
-    },
-  },
-});
-
 const documentApp = new OpenAPIHono({
   defaultHook: (result, c) => {
     if (!result.success) {
@@ -454,58 +419,6 @@ documentApp.openapi(duplicateDocument, async (c) => {
     session.user.id,
   );
   return c.json({ document, success: true });
-});
-
-documentApp.openapi(generatePdf, async (c) => {
-  const session = await getNextAuthSessionAsync();
-  if (!session?.user?.id) {
-    return c.json({ error: "Unauthorized" }, 401);
-  }
-
-  const { id } = c.req.valid("param");
-  const ctx = createContext(getCloudflareContext({ async: false }).env);
-  const services = new Services(ctx);
-
-  try {
-    // Get document
-    const document = await services.document.getDocumentById(
-      id,
-      session.user.id,
-    );
-    if (!document) {
-      return c.json({ error: "Document not found" }, 404);
-    }
-
-    // Convert markdown to HTML
-    const html = markdownToHtml(document.content);
-
-    // Get Cloudflare Browser binding
-    const env = getCloudflareContext({ async: false }).env;
-    const browserBinding = env.BROWSER;
-
-    if (!browserBinding) {
-      return c.json({ error: "Browser rendering not available" }, 500);
-    }
-
-    // Generate PDF
-    const pdfBuffer = await generatePdfFromMarkdown(
-      browserBinding,
-      html,
-      document.title,
-    );
-
-    // Get PDF filename and headers
-    const filename = getPdfFilename(document.title);
-    const headers = getPdfHeaders(filename);
-
-    // Return PDF
-    return new Response(Buffer.from(pdfBuffer), {
-      headers,
-    });
-  } catch (error) {
-    console.error("Error generating PDF:", error);
-    return c.json({ error: "Failed to generate PDF" }, 500);
-  }
 });
 
 export default documentApp;

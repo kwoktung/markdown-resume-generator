@@ -154,7 +154,7 @@ aiApp.openapi(chatRoute, async (c) => {
     // Call Cloudflare AI
     const ai = context.env.AI;
     const aiResponse: { response?: string } = await ai.run(
-      "@cf/meta/llama-3.1-8b-instruct",
+      "@cf/meta/llama-3-8b-instruct",
       {
         messages: conversationMessages,
         temperature: 0.7,

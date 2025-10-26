@@ -2,6 +2,7 @@ import Link from "next/link";
 import { FileText, Sparkles, Download, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { ClientOnly } from "@/components/client-only";
 
 export default function Home() {
   return (
@@ -16,7 +17,9 @@ export default function Home() {
             </span>
           </Link>
           <nav className="flex items-center gap-6">
-            <ThemeToggle />
+            <ClientOnly>
+              <ThemeToggle />
+            </ClientOnly>
           </nav>
         </div>
       </header>
