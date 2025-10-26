@@ -21,10 +21,12 @@ import { useAutoSave } from "./auto-save-context";
 import { ExportPdfButton } from "./export-pdf-button";
 import { AiChatPanel } from "@/components/ai-chat-panel";
 import { AiChatButton } from "@/components/ai-chat-button";
+import { DEFAULT_CONTENT } from "./default-content";
+import { ClientOnly, AuthenticatedOnly } from "@/components/client-only";
 
 const UNSAVED_DOCUMENT_KEY = "editor-unsaved-document";
 const DEFAULT_DOCUMENT_TITLE = "Untitled Document";
-const AUTO_SAVE_DELAY = 10000;
+const AUTO_SAVE_DELAY = 5000;
 
 function EditorContent() {
   const router = useRouter();
@@ -54,12 +56,16 @@ function EditorContent() {
       // Load from sessionStorage if no ID (unsaved document)
       try {
         const saved = sessionStorage.getItem(UNSAVED_DOCUMENT_KEY);
+        let title = DEFAULT_DOCUMENT_TITLE;
+        let content = DEFAULT_CONTENT;
         if (saved) {
           const { title: savedTitle, content: savedContent } =
             JSON.parse(saved);
-          setTitle(savedTitle || DEFAULT_DOCUMENT_TITLE);
-          setContent(savedContent || "");
+          title = savedTitle;
+          content = savedContent;
         }
+        setTitle(title);
+        setContent(content);
       } catch (error) {
         console.error("Error loading from sessionStorage:", error);
       }
@@ -83,35 +89,38 @@ function EditorContent() {
   };
 
   const handleSave = useCallback(async () => {
-    if (!session) {
-      router.push("/sign-in");
-      return;
-    }
     setIsSaving(true);
     try {
-      if (documentId) {
-        // Update existing document
-        await httpClient.put(`/api/services/document/${documentId}`, {
-          title,
-          content,
-        });
-      } else {
-        // Create new document
-        const response = await httpClient.post("/api/services/document", {
-          title,
-          content,
-        });
-        const { id } = response.data;
+      if (session) {
+        if (documentId) {
+          // Update existing document
+          await httpClient.put(`/api/services/document/${documentId}`, {
+            title,
+            content,
+          });
+        } else {
+          // Create new document
+          const response = await httpClient.post("/api/services/document", {
+            title,
+            content,
+          });
+          const { id } = response.data;
 
-        // Clear sessionStorage backup once saved to server
-        try {
-          sessionStorage.removeItem(UNSAVED_DOCUMENT_KEY);
-        } catch (error) {
-          console.error("Error clearing sessionStorage:", error);
+          // Clear sessionStorage backup once saved to server
+          try {
+            sessionStorage.removeItem(UNSAVED_DOCUMENT_KEY);
+          } catch (error) {
+            console.error("Error clearing sessionStorage:", error);
+          }
+
+          // Update URL with new document ID
+          router.push(`/editor?id=${id}`);
         }
-
-        // Update URL with new document ID
-        router.push(`/editor?id=${id}`);
+      } else {
+        sessionStorage.setItem(
+          UNSAVED_DOCUMENT_KEY,
+          JSON.stringify({ title, content }),
+        );
       }
       setLastSaved(new Date());
       setHasUnsavedChanges(false);
@@ -132,28 +141,9 @@ function EditorContent() {
     handleSaveRef.current = handleSave;
   }, [handleSave]);
 
-  // Save to sessionStorage for unsaved documents (prevent data loss on reload)
-  useEffect(() => {
-    if (!documentId && (title !== DEFAULT_DOCUMENT_TITLE || content !== "")) {
-      try {
-        sessionStorage.setItem(
-          UNSAVED_DOCUMENT_KEY,
-          JSON.stringify({ title, content }),
-        );
-      } catch (error) {
-        console.error("Error saving to sessionStorage:", error);
-      }
-    }
-  }, [documentId, title, content]);
-
   // Autosave effect - triggers 2 seconds after last change
   useEffect(() => {
-    if (
-      !autoSaveEnabled ||
-      !hasUnsavedChanges ||
-      isLoadingRef.current ||
-      !documentId
-    ) {
+    if (!autoSaveEnabled || !hasUnsavedChanges || isLoadingRef.current) {
       return;
     }
 
@@ -172,7 +162,7 @@ function EditorContent() {
         clearTimeout(autosaveTimeoutRef.current);
       }
     };
-  }, [autoSaveEnabled, hasUnsavedChanges, documentId]);
+  }, [autoSaveEnabled, hasUnsavedChanges]);
 
   const handleTitleChange = (newTitle: string) => {
     setTitle(newTitle);
@@ -219,16 +209,19 @@ function EditorContent() {
       {/* Header */}
       <header className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b bg-card px-6 py-4 shadow-sm">
         <div className="flex items-center gap-4 min-w-0 flex-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => router.back()}
-            className="shrink-0"
-            title="Back to documents"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-
+          <ClientOnly>
+            <AuthenticatedOnly>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => router.back()}
+                className="shrink-0"
+                title="Back to documents"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            </AuthenticatedOnly>
+          </ClientOnly>
           <div className="flex items-center gap-3 min-w-0 flex-1">
             <FileText className="h-5 w-5 text-muted-foreground shrink-0" />
             <Input
@@ -307,10 +300,11 @@ function EditorContent() {
             </Button>
 
             <ExportPdfButton
-              documentId={documentId}
               title={title}
+              content={content}
               variant="outline"
               size="sm"
+              disabled={!content || !title}
               className="shrink-0"
             />
           </div>

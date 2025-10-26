@@ -10,10 +10,11 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Download, FileText } from "lucide-react";
 import { httpClient } from "@/lib/client";
+import { toast } from "sonner";
 
 interface ExportPdfButtonProps {
-  documentId: string | null;
   title: string;
+  content: string;
   disabled?: boolean;
   variant?:
     | "default"
@@ -27,8 +28,8 @@ interface ExportPdfButtonProps {
 }
 
 export function ExportPdfButton({
-  documentId,
   title,
+  content,
   disabled = false,
   variant = "outline",
   size = "sm",
@@ -50,11 +51,6 @@ export function ExportPdfButton({
   }, []);
 
   const handleExportPdf = useCallback(async () => {
-    if (!documentId) {
-      alert("Please save the document first");
-      return;
-    }
-
     setIsGeneratingPdf(true);
     setProgress(0);
 
@@ -68,8 +64,11 @@ export function ExportPdfButton({
       }, 200);
 
       const response = await httpClient.post(
-        `/api/services/document/${documentId}/pdf`,
-        {},
+        `/api/services/export/pdf`,
+        {
+          title,
+          content,
+        },
         {
           responseType: "blob",
         },
@@ -91,8 +90,9 @@ export function ExportPdfButton({
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Error generating PDF:", error);
-      alert("Failed to generate PDF");
+      const message =
+        error instanceof Error ? error.message : "Failed to generate PDF";
+      toast.error(message);
     } finally {
       // Clear interval in all cases (success or error)
       if (progressIntervalRef.current) {
@@ -102,14 +102,14 @@ export function ExportPdfButton({
       setIsGeneratingPdf(false);
       setProgress(0);
     }
-  }, [documentId, title]);
+  }, [title, content]);
 
   return (
     <Popover open={isGeneratingPdf}>
       <PopoverTrigger asChild>
         <Button
           onClick={handleExportPdf}
-          disabled={!documentId || disabled || isGeneratingPdf}
+          disabled={disabled || isGeneratingPdf}
           variant={variant}
           size={size}
           className={className}
