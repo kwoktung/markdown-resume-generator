@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
   /* config options here */
 };
 
-initOpenNextCloudflareForDev();
-
 export default nextConfig;
+
+// added by create cloudflare to enable calling `getCloudflareContext()` in `next dev`
+// Only initialize when running dev server, skip for lint/build
+if (process.env.NODE_ENV === "development") {
+  initOpenNextCloudflareForDev();
+}

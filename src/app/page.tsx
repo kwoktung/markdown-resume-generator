@@ -25,7 +25,7 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <main className="flex-1 ">
+      <main className="flex-1">
         <section className="h-screen container mx-auto flex flex-col items-center justify-center gap-8 px-4 py-24 md:px-8 md:py-32 lg:py-40">
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-1.5 text-sm">
