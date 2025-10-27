@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
           <Link href="/" className="flex items-center gap-2">
             <FileText className="h-6 w-6" />
@@ -26,7 +26,7 @@ export default function Home() {
 
       {/* Hero Section */}
       <main className="flex-1">
-        <section className="container mx-auto flex flex-col items-center justify-center gap-8 px-4 py-24 md:px-8 md:py-32 lg:py-40">
+        <section className="h-screen container mx-auto flex flex-col items-center justify-center gap-8 px-4 py-24 md:px-8 md:py-32 lg:py-40">
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-1.5 text-sm">
               <Sparkles className="h-4 w-4" />
