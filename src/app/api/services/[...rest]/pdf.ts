@@ -35,7 +35,7 @@ const exportPdf = createRoute({
     200: {
       description: "PDF file generated successfully",
       content: {
-        "application/pdf": {
+        "application/json": {
           schema: exportPdfResponseSchema,
         },
       },
