@@ -72,8 +72,6 @@ export async function generatePdfFromHtml(
       footerTemplate: pdfOptions.footerTemplate,
     });
 
-    await browser.close();
-
     return pdfBuffer;
   } catch (error) {
     console.error("Error generating PDF:", error);
