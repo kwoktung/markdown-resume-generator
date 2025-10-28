@@ -5,7 +5,7 @@ export type Context = {
   env: CloudflareEnv;
   logger: Logger;
   db: DatabaseClient;
-  // kv: KVNamespace;
+  kv: KVNamespace;
 };
 
 export const createContext = (env: CloudflareEnv): Context => {
@@ -13,5 +13,6 @@ export const createContext = (env: CloudflareEnv): Context => {
     env,
     logger: getLogger(env),
     db: createDatabaseClient(env),
+    kv: env.KV,
   };
 };

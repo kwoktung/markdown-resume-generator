@@ -15,9 +15,13 @@ const exportPdfSchema = z.object({
   }),
 });
 
+const exportPdfResponseSchema = z.object({
+  id: z.string(),
+});
+
 const exportPdf = createRoute({
   method: "post",
-  path: "/pdf",
+  path: "/export",
   request: {
     body: {
       content: {
@@ -32,7 +36,7 @@ const exportPdf = createRoute({
       description: "PDF file generated successfully",
       content: {
         "application/pdf": {
-          schema: z.any(),
+          schema: exportPdfResponseSchema,
         },
       },
     },
@@ -41,6 +45,32 @@ const exportPdf = createRoute({
     },
     500: {
       description: "Failed to generate PDF",
+    },
+  },
+});
+
+export const getPdf = createRoute({
+  method: "get",
+  path: "/:id",
+  request: {
+    params: z.object({
+      id: z.uuid(),
+    }),
+  },
+  responses: {
+    200: {
+      description: "PDF file downloaded successfully",
+      content: {
+        "application/pdf": {
+          schema: z.any(),
+        },
+      },
+    },
+    404: {
+      description: "PDF file not found",
+    },
+    500: {
+      description: "Failed to download PDF",
     },
   },
 });
@@ -75,14 +105,53 @@ exportApp.openapi(exportPdf, async (c) => {
       return c.json({ error: "Rate limit exceeded" }, 429);
     }
 
+    const id = crypto.randomUUID();
+
+    env.KV.put(
+      `pdf_export:${id}`,
+      JSON.stringify({ title: body.title, content: body.content }),
+      { expirationTtl: 60 },
+    );
+
     const browserBinding = env.BROWSER;
+    await generatePdfResponse(browserBinding, body.title, body.content);
 
     // Generate and return PDF response
-    return await generatePdfResponse(browserBinding, body.title, body.content);
+    return c.json({ id }, 200);
   } catch (error) {
     console.error("Error generating PDF:", error);
     const errorMessage =
       error instanceof Error ? error.message : "Failed to generate PDF";
+    return c.json({ error: errorMessage }, 500);
+  }
+});
+
+exportApp.openapi(getPdf, async (c) => {
+  const { id } = c.req.valid("param");
+
+  try {
+    // Get Cloudflare Browser binding
+    const env = getCloudflareContext({ async: false }).env;
+    const pdfData = await env.KV.get(`pdf_export:${id}`);
+    if (!pdfData) {
+      return c.json({ error: "PDF not found" }, 404);
+    }
+
+    const { title, content } = JSON.parse(pdfData);
+
+    const browserBinding = env.BROWSER;
+
+    const pdfResponse = await generatePdfResponse(
+      browserBinding,
+      title,
+      content,
+    );
+
+    return pdfResponse;
+  } catch (error) {
+    console.error("Error downloading PDF:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to download PDF";
     return c.json({ error: errorMessage }, 500);
   }
 });
