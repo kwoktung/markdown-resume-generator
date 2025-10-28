@@ -107,21 +107,19 @@ exportApp.openapi(exportPdf, async (c) => {
 
     const id = crypto.randomUUID();
 
-    env.KV.put(
+    await env.KV.put(
       `pdf_export:${id}`,
       JSON.stringify({ title: body.title, content: body.content }),
       { expirationTtl: 60 },
     );
 
-    const browserBinding = env.BROWSER;
-    await generatePdfResponse(browserBinding, body.title, body.content);
-
     // Generate and return PDF response
     return c.json({ id }, 200);
   } catch (error) {
-    console.error("Error generating PDF:", error);
     const errorMessage =
-      error instanceof Error ? error.message : "Failed to generate PDF";
+      error instanceof Error
+        ? error.message
+        : "Failed to generate PDF export request";
     return c.json({ error: errorMessage }, 500);
   }
 });
@@ -132,7 +130,8 @@ exportApp.openapi(getPdf, async (c) => {
   try {
     // Get Cloudflare Browser binding
     const env = getCloudflareContext({ async: false }).env;
-    const pdfData = await env.KV.get(`pdf_export:${id}`);
+    const exportKey = `pdf_export:${id}`;
+    const pdfData = await env.KV.get(exportKey);
     if (!pdfData) {
       return c.json({ error: "PDF not found" }, 404);
     }
@@ -147,9 +146,10 @@ exportApp.openapi(getPdf, async (c) => {
       content,
     );
 
+    await env.KV.delete(exportKey);
+
     return pdfResponse;
   } catch (error) {
-    console.error("Error downloading PDF:", error);
     const errorMessage =
       error instanceof Error ? error.message : "Failed to download PDF";
     return c.json({ error: errorMessage }, 500);
