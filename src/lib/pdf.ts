@@ -127,8 +127,8 @@ export function getPdfFilename(title: string): string {
  */
 export function getPdfHeaders(filename: string): Record<string, string> {
   return {
-    "Content-Type": "application/pdf",
     "Content-Disposition": `attachment; filename="${filename}"`,
+    "Content-Type": "application/pdf",
     "Cache-Control": "no-cache, no-store, must-revalidate",
     Pragma: "no-cache",
     Expires: "0",

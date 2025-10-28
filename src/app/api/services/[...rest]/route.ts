@@ -3,7 +3,7 @@ import { Scalar } from "@scalar/hono-api-reference";
 
 import documentApp from "./document";
 import aiApp from "./ai";
-import exportApp from "./export";
+import pdfApp from "./pdf";
 
 const basePath = "/api/services";
 
@@ -11,7 +11,7 @@ const app = new OpenAPIHono().basePath(basePath);
 
 app.route("/document", documentApp);
 app.route("/ai/chat", aiApp);
-app.route("/export", exportApp);
+app.route("/pdf", pdfApp);
 app.doc31("/docs", {
   openapi: "3.1.0",
   info: {

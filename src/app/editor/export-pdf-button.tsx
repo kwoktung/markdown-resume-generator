@@ -63,12 +63,16 @@ export function ExportPdfButton({
         });
       }, 200);
 
-      const response = await httpClient.post(
-        `/api/services/export/pdf`,
+      const exportResponse = await httpClient.post<{ id: string }>(
+        `/api/services/pdf/export`,
         {
           title,
           content,
         },
+      );
+
+      const response = await httpClient.get(
+        `/api/services/pdf/${exportResponse.data.id}`,
         {
           responseType: "blob",
         },
