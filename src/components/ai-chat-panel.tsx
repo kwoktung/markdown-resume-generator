@@ -13,7 +13,6 @@ import {
   Copy,
   Check,
 } from "lucide-react";
-import { httpClient } from "@/lib/client";
 import { useClickOutside } from "@/hooks/useClickOutside";
 
 export interface Message {
@@ -21,6 +20,7 @@ export interface Message {
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  isStreaming?: boolean;
 }
 
 interface AiChatPanelProps {
@@ -87,34 +87,103 @@ export function AiChatPanel({
     setInput("");
     setIsLoading(true);
 
+    // Create assistant message placeholder for streaming
+    const assistantMessageId = (Date.now() + 1).toString();
+    const assistantMessage: Message = {
+      id: assistantMessageId,
+      role: "assistant",
+      content: "",
+      timestamp: new Date(),
+      isStreaming: true,
+    };
+
+    setMessages((prev) => [...prev, assistantMessage]);
+
     try {
-      const response = await httpClient.post("/api/services/ai/chat", {
-        messages: [...messages, userMessage].map((m) => ({
-          role: m.role,
-          content: m.content,
-        })),
-        currentResume: currentContent,
-        documentTitle,
+      const response = await fetch("/api/services/ai/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messages: [...messages, userMessage].map((m) => ({
+            role: m.role,
+            content: m.content,
+          })),
+          currentResume: currentContent,
+          documentTitle,
+        }),
       });
 
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: response.data.message,
-        timestamp: new Date(),
-      };
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-      setMessages((prev) => [...prev, assistantMessage]);
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      if (!reader) {
+        throw new Error("No response body reader available");
+      }
+
+      let accumulatedContent = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) {
+          break;
+        }
+
+        const chunk = decoder.decode(value, { stream: true });
+        accumulatedContent += chunk;
+
+        // Update the assistant message with accumulated content
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === assistantMessageId
+              ? { ...msg, content: accumulatedContent, isStreaming: true }
+              : msg,
+          ),
+        );
+      }
+
+      // Mark streaming as complete
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === assistantMessageId ? { ...msg, isStreaming: false } : msg,
+        ),
+      );
+
+      // If no content was streamed, show error
+      if (accumulatedContent.trim().length === 0) {
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === assistantMessageId
+              ? {
+                  ...msg,
+                  content:
+                    "I apologize, but I couldn't generate a response. Please try again.",
+                  isStreaming: false,
+                }
+              : msg,
+          ),
+        );
+      }
     } catch (error) {
       console.error("Error sending message:", error);
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content:
-          "Sorry, I encountered an error. Please try again or check your connection.",
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, errorMessage]);
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === assistantMessageId
+            ? {
+                ...msg,
+                content:
+                  "Sorry, I encountered an error. Please try again or check your connection.",
+                isStreaming: false,
+              }
+            : msg,
+        ),
+      );
     } finally {
       setIsLoading(false);
     }
@@ -134,6 +203,7 @@ export function AiChatPanel({
     };
 
     setInput(prompts[action] || "");
+    setTimeout(() => handleSendMessage(), 500);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -155,9 +225,9 @@ export function AiChatPanel({
       }`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b bg-gradient-to-r from-primary/10 to-purple-500/10 shrink-0">
+      <div className="flex items-center justify-between px-4 py-3 border-b bg-linear-to-r from-primary/10 to-purple-500/10 shrink-0">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-full bg-linear-to-br from-primary to-purple-500 flex items-center justify-center">
             <Sparkles className="h-4 w-4 text-white" />
           </div>
           <div>
@@ -224,19 +294,6 @@ export function AiChatPanel({
                 onInsertText={onInsertText}
               />
             ))}
-            {isLoading && (
-              <div className="flex items-start gap-3">
-                <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center shrink-0">
-                  <Bot className="h-4 w-4 text-white" />
-                </div>
-                <div className="flex-1 bg-muted rounded-2xl px-4 py-3">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Thinking...</span>
-                  </div>
-                </div>
-              </div>
-            )}
             <div ref={messagesEndRef} />
           </div>
         </ScrollArea>
@@ -250,7 +307,7 @@ export function AiChatPanel({
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyPress}
             placeholder="Ask me anything about your resume..."
-            className="flex-1 min-h-[44px] max-h-[120px] px-4 py-3 rounded-lg border bg-background resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+            className="flex-1 min-h-[44px] max-h-[120px] px-4 py-3 rounded-lg border bg-background resize-none focus:outline-none focus:ring-2 focus:ring-primary overflow-y-auto custom-scrollbar"
             rows={1}
           />
           <Button
@@ -303,14 +360,26 @@ function MessageBubble({
 
   return (
     <div className="flex items-start gap-3">
-      <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center shrink-0">
+      <div className="h-8 w-8 rounded-full bg-linear-to-br from-primary to-purple-500 flex items-center justify-center shrink-0">
         <Bot className="h-4 w-4 text-white" />
       </div>
       <div className="flex-1 space-y-2">
         <div className="bg-muted rounded-2xl px-4 py-3">
-          <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+          {message.content.length === 0 && message.isStreaming ? (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>Thinking...</span>
+            </div>
+          ) : (
+            <p className="text-sm whitespace-pre-wrap">
+              {message.content}
+              {message.isStreaming && (
+                <span className="inline-block w-[2px] h-4 bg-primary ml-1 animate-pulse" />
+              )}
+            </p>
+          )}
         </div>
-        {message.id !== "welcome" && (
+        {message.id !== "welcome" && !message.isStreaming && (
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"

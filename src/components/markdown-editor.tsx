@@ -53,7 +53,7 @@ export function MarkdownEditor({
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         readOnly={readOnly}
-        className="flex-1 w-full p-4 font-mono text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-0 focus:outline-none focus:ring-0 resize-none"
+        className="flex-1 w-full p-4 font-mono text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-0 focus:outline-none focus:ring-0 resize-none custom-scrollbar"
         spellCheck={false}
       />
     </div>
