@@ -55,11 +55,19 @@ export function ExportPdfButton({
     setProgress(0);
 
     try {
-      // Simulate progress updates
+      // Simulate progress updates with realistic behavior
       progressIntervalRef.current = setInterval(() => {
         setProgress((prev) => {
-          if (prev >= 90) return prev;
-          return Math.min(prev + Math.random() * 20, 90);
+          // Fast progress up to 90%
+          if (prev < 90) {
+            return Math.min(prev + Math.random() * 15 + 5, 90);
+          }
+          // Slow progress from 90% to 99.9%
+          if (prev < 99.9) {
+            return Math.min(prev + Math.random() * 0.3, 99.9);
+          }
+          // Stick at 99.9%
+          return 99.9;
         });
       }, 200);
 
@@ -83,6 +91,7 @@ export function ExportPdfButton({
         progressIntervalRef.current = null;
       }
       setProgress(100);
+      await new Promise((resolve) => setTimeout(resolve, 10));
 
       // Create download link
       const url = window.URL.createObjectURL(new Blob([response.data]));

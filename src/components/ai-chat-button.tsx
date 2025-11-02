@@ -21,7 +21,7 @@ export function AiChatButton({ onClick, isOpen }: AiChatButtonProps) {
         className={`
           h-10 transition-all duration-300 shadow-2xl
           ${isOpen ? "w-10 bg-destructive hover:bg-destructive/90" : isHovered ? "w-48 pr-4" : "w-10"}
-          bg-gradient-to-r from-primary to-purple-500 hover:from-primary/90 hover:to-purple-600
+          bg-linear-to-r from-primary to-purple-500 hover:from-primary/90 hover:to-purple-600
           group flex items-center justify-center
         `}
         size="icon"

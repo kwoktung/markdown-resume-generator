@@ -1,4 +1,5 @@
 import { z, createRoute, OpenAPIHono } from "@hono/zod-openapi";
+import { streamText } from "hono/streaming";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { HttpResponse } from "@/lib/response";
 import { getNextAuthSessionAsync } from "@/lib/auth";
@@ -151,23 +152,55 @@ aiApp.openapi(chatRoute, async (c) => {
     // Add conversation history
     conversationMessages.push(...messages);
 
-    // Call Cloudflare AI
+    // Call Cloudflare AI with streaming
     const ai = context.env.AI;
-    const aiResponse: { response?: string } = await ai.run(
-      "@cf/meta/llama-3-8b-instruct",
-      {
-        messages: conversationMessages,
-        temperature: 0.7,
-        max_tokens: 1024,
-      },
-    );
 
-    // Extract the response
-    const assistantMessage: string =
-      aiResponse?.response ||
-      "I apologize, but I couldn't generate a response. Please try again.";
+    return streamText(c, async (stream) => {
+      try {
+        const aiStream = await ai.run("@cf/meta/llama-3-8b-instruct", {
+          messages: conversationMessages,
+          temperature: 0.7,
+          max_tokens: 1024,
+          stream: true,
+        });
 
-    return c.json({ message: assistantMessage, success: true });
+        // Process the stream
+        const reader = (aiStream as ReadableStream).getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          // Decode and add to buffer
+          const chucked = decoder.decode(value, { stream: true });
+
+          buffer += chucked;
+
+          // Split by newlines, but keep the last incomplete line in buffer
+          const lines = buffer.split("\n\n");
+          buffer = lines.pop() || ""; // Keep the last incomplete line
+
+          for (const line of lines) {
+            if (line.startsWith("data: ")) {
+              const jsonStr = line.slice(6).trim();
+              if (jsonStr && jsonStr !== "[DONE]") {
+                const data = JSON.parse(jsonStr);
+                if (data.response) {
+                  await stream.write(data.response);
+                }
+              }
+            }
+          }
+        }
+      } catch (streamError) {
+        console.error("AI Streaming Error:", streamError);
+        await stream.write(
+          "I apologize, but I encountered an error. Please try again in a moment.",
+        );
+      }
+    });
   } catch (error) {
     console.error("AI Chat Error:", error);
     return c.json(
