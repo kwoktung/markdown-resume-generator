@@ -134,6 +134,7 @@ export function AiChatPanel({
     };
 
     setInput(prompts[action] || "");
+    setTimeout(() => handleSendMessage(), 500);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -155,9 +156,9 @@ export function AiChatPanel({
       }`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b bg-gradient-to-r from-primary/10 to-purple-500/10 shrink-0">
+      <div className="flex items-center justify-between px-4 py-3 border-b bg-linear-to-r from-primary/10 to-purple-500/10 shrink-0">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-full bg-linear-to-br from-primary to-purple-500 flex items-center justify-center">
             <Sparkles className="h-4 w-4 text-white" />
           </div>
           <div>
@@ -226,7 +227,7 @@ export function AiChatPanel({
             ))}
             {isLoading && (
               <div className="flex items-start gap-3">
-                <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center shrink-0">
+                <div className="h-8 w-8 rounded-full bg-linear-to-br from-primary to-purple-500 flex items-center justify-center shrink-0">
                   <Bot className="h-4 w-4 text-white" />
                 </div>
                 <div className="flex-1 bg-muted rounded-2xl px-4 py-3">
@@ -303,7 +304,7 @@ function MessageBubble({
 
   return (
     <div className="flex items-start gap-3">
-      <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center shrink-0">
+      <div className="h-8 w-8 rounded-full bg-linear-to-br from-primary to-purple-500 flex items-center justify-center shrink-0">
         <Bot className="h-4 w-4 text-white" />
       </div>
       <div className="flex-1 space-y-2">

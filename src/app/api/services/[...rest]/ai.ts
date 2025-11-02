@@ -143,7 +143,7 @@ aiApp.openapi(chatRoute, async (c) => {
     // Add resume context if available
     if (currentResume && currentResume.trim().length > 0) {
       conversationMessages.push({
-        role: "system",
+        role: "user",
         content: `Current resume content (title: "${documentTitle || "Untitled"}"):\n\n${currentResume}\n\nUse this context to provide personalized advice.`,
       });
     }
