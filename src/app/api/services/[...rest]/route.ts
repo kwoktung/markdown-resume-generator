@@ -17,7 +17,8 @@ app.doc31("/docs", {
   info: {
     title: "Markdown Pro API",
     version: "1.0.0",
-    description: "API for managing markdown documents with AI-powered assistance",
+    description:
+      "API for managing markdown documents with AI-powered assistance",
   },
   servers: [
     {

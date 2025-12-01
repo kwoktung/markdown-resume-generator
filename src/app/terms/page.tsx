@@ -39,8 +39,8 @@ export default function TermsOfService() {
                 Acceptance of Terms
               </h2>
               <p className="text-muted-foreground mb-6">
-                By accessing and using Markdown Pro, you accept and agree to
-                be bound by the terms and provision of this agreement. If you do
+                By accessing and using Markdown Pro, you accept and agree to be
+                bound by the terms and provision of this agreement. If you do
                 not agree to these Terms of Service, please do not use our
                 service.
               </p>
@@ -49,8 +49,8 @@ export default function TermsOfService() {
                 Use of Service
               </h2>
               <p className="text-muted-foreground mb-4">
-                Markdown Pro is provided as an open-source tool for creating
-                and managing documents. You agree to:
+                Markdown Pro is provided as an open-source tool for creating and
+                managing documents. You agree to:
               </p>
               <ul className="list-disc list-inside text-muted-foreground mb-6 space-y-2">
                 <li>Use the service for lawful purposes only</li>
@@ -79,8 +79,8 @@ export default function TermsOfService() {
                 <li>Create backups of your content for reliability purposes</li>
               </ul>
               <p className="text-muted-foreground mb-6">
-                We will not share, sell, or use your content for any
-                other purpose without your explicit consent.
+                We will not share, sell, or use your content for any other
+                purpose without your explicit consent.
               </p>
 
               <h2 className="text-2xl font-semibold mb-4 mt-8">
@@ -97,27 +97,27 @@ export default function TermsOfService() {
                 Intellectual Property
               </h2>
               <p className="text-muted-foreground mb-6">
-                The Markdown Pro software is open-source and licensed under
-                the terms specified in the project repository. You are free to
-                use, modify, and distribute the software according to the
-                license terms.
+                The Markdown Pro software is open-source and licensed under the
+                terms specified in the project repository. You are free to use,
+                modify, and distribute the software according to the license
+                terms.
               </p>
 
               <h2 className="text-2xl font-semibold mb-4 mt-8">
                 Limitation of Liability
               </h2>
               <p className="text-muted-foreground mb-6">
-                To the maximum extent permitted by law, Markdown Pro shall
-                not be liable for any indirect, incidental, special,
-                consequential, or punitive damages resulting from your use or
-                inability to use the service.
+                To the maximum extent permitted by law, Markdown Pro shall not
+                be liable for any indirect, incidental, special, consequential,
+                or punitive damages resulting from your use or inability to use
+                the service.
               </p>
 
               <h2 className="text-2xl font-semibold mb-4 mt-8">Data Backup</h2>
               <p className="text-muted-foreground mb-6">
                 While we implement backup procedures, you are responsible for
-                maintaining your own backups of your content. We
-                recommend regularly exporting your documents.
+                maintaining your own backups of your content. We recommend
+                regularly exporting your documents.
               </p>
 
               <h2 className="text-2xl font-semibold mb-4 mt-8">Termination</h2>

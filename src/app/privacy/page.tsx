@@ -37,10 +37,9 @@ export default function PrivacyPolicy() {
             <section className="prose prose-gray dark:prose-invert max-w-none">
               <h2 className="text-2xl font-semibold mb-4">Introduction</h2>
               <p className="text-muted-foreground mb-6">
-                Markdown Pro is an open-source project committed to
-                protecting your privacy. This Privacy Policy explains how we
-                collect, use, and safeguard your information when you use our
-                service.
+                Markdown Pro is an open-source project committed to protecting
+                your privacy. This Privacy Policy explains how we collect, use,
+                and safeguard your information when you use our service.
               </p>
 
               <h2 className="text-2xl font-semibold mb-4 mt-8">
