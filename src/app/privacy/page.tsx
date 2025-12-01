@@ -12,7 +12,7 @@ export default function PrivacyPolicy() {
           <Link href="/" className="flex items-center gap-2">
             <FileText className="h-6 w-6" />
             <span className="text-lg font-semibold tracking-tight">
-              Markdown Resume
+              Markdown Pro
             </span>
           </Link>
           <nav className="flex items-center gap-6">
@@ -37,7 +37,7 @@ export default function PrivacyPolicy() {
             <section className="prose prose-gray dark:prose-invert max-w-none">
               <h2 className="text-2xl font-semibold mb-4">Introduction</h2>
               <p className="text-muted-foreground mb-6">
-                Markdown Resume is an open-source project committed to
+                Markdown Pro is an open-source project committed to
                 protecting your privacy. This Privacy Policy explains how we
                 collect, use, and safeguard your information when you use our
                 service.
@@ -47,7 +47,7 @@ export default function PrivacyPolicy() {
                 Information We Collect
               </h2>
               <p className="text-muted-foreground mb-4">
-                When you use Markdown Resume, we may collect:
+                When you use Markdown Pro, we may collect:
               </p>
               <ul className="list-disc list-inside text-muted-foreground mb-6 space-y-2">
                 <li>
@@ -55,7 +55,7 @@ export default function PrivacyPolicy() {
                   authentication details when you sign in
                 </li>
                 <li>
-                  <strong>Resume Content:</strong> The markdown content and
+                  <strong>Document Content:</strong> The markdown content and
                   documents you create and store
                 </li>
                 <li>
@@ -72,7 +72,7 @@ export default function PrivacyPolicy() {
               </p>
               <ul className="list-disc list-inside text-muted-foreground mb-6 space-y-2">
                 <li>Provide and maintain our service</li>
-                <li>Store and sync your resume documents</li>
+                <li>Store and sync your documents</li>
                 <li>Improve and optimize the user experience</li>
                 <li>Communicate with you about service updates</li>
               </ul>
@@ -103,7 +103,7 @@ export default function PrivacyPolicy() {
                 <li>Access your personal data</li>
                 <li>Request correction of your data</li>
                 <li>Request deletion of your data</li>
-                <li>Export your resume documents</li>
+                <li>Export your documents</li>
               </ul>
 
               <h2 className="text-2xl font-semibold mb-4 mt-8">
@@ -151,7 +151,7 @@ export default function PrivacyPolicy() {
       <footer className="border-t border-border bg-muted/50">
         <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-6 md:px-8">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Markdown Resume. All rights reserved.
+            © {new Date().getFullYear()} Markdown Pro. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <Link

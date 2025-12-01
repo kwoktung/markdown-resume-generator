@@ -12,7 +12,7 @@ export default function TermsOfService() {
           <Link href="/" className="flex items-center gap-2">
             <FileText className="h-6 w-6" />
             <span className="text-lg font-semibold tracking-tight">
-              Markdown Resume
+              Markdown Pro
             </span>
           </Link>
           <nav className="flex items-center gap-6">
@@ -39,7 +39,7 @@ export default function TermsOfService() {
                 Acceptance of Terms
               </h2>
               <p className="text-muted-foreground mb-6">
-                By accessing and using Markdown Resume, you accept and agree to
+                By accessing and using Markdown Pro, you accept and agree to
                 be bound by the terms and provision of this agreement. If you do
                 not agree to these Terms of Service, please do not use our
                 service.
@@ -49,8 +49,8 @@ export default function TermsOfService() {
                 Use of Service
               </h2>
               <p className="text-muted-foreground mb-4">
-                Markdown Resume is provided as an open-source tool for creating
-                and managing resume documents. You agree to:
+                Markdown Pro is provided as an open-source tool for creating
+                and managing documents. You agree to:
               </p>
               <ul className="list-disc list-inside text-muted-foreground mb-6 space-y-2">
                 <li>Use the service for lawful purposes only</li>
@@ -71,15 +71,15 @@ export default function TermsOfService() {
 
               <h2 className="text-2xl font-semibold mb-4 mt-8">User Content</h2>
               <p className="text-muted-foreground mb-4">
-                You retain all rights to the resume content you create using our
-                service. By using Markdown Resume, you grant us the right to:
+                You retain all rights to the content you create using our
+                service. By using Markdown Pro, you grant us the right to:
               </p>
               <ul className="list-disc list-inside text-muted-foreground mb-6 space-y-2">
                 <li>Store and process your content to provide the service</li>
                 <li>Create backups of your content for reliability purposes</li>
               </ul>
               <p className="text-muted-foreground mb-6">
-                We will not share, sell, or use your resume content for any
+                We will not share, sell, or use your content for any
                 other purpose without your explicit consent.
               </p>
 
@@ -97,7 +97,7 @@ export default function TermsOfService() {
                 Intellectual Property
               </h2>
               <p className="text-muted-foreground mb-6">
-                The Markdown Resume software is open-source and licensed under
+                The Markdown Pro software is open-source and licensed under
                 the terms specified in the project repository. You are free to
                 use, modify, and distribute the software according to the
                 license terms.
@@ -107,7 +107,7 @@ export default function TermsOfService() {
                 Limitation of Liability
               </h2>
               <p className="text-muted-foreground mb-6">
-                To the maximum extent permitted by law, Markdown Resume shall
+                To the maximum extent permitted by law, Markdown Pro shall
                 not be liable for any indirect, incidental, special,
                 consequential, or punitive damages resulting from your use or
                 inability to use the service.
@@ -116,7 +116,7 @@ export default function TermsOfService() {
               <h2 className="text-2xl font-semibold mb-4 mt-8">Data Backup</h2>
               <p className="text-muted-foreground mb-6">
                 While we implement backup procedures, you are responsible for
-                maintaining your own backups of your resume content. We
+                maintaining your own backups of your content. We
                 recommend regularly exporting your documents.
               </p>
 
@@ -173,7 +173,7 @@ export default function TermsOfService() {
       <footer className="border-t border-border bg-muted/50">
         <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-6 md:px-8">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Markdown Resume. All rights reserved.
+            © {new Date().getFullYear()} Markdown Pro. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <Link
