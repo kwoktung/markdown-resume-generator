@@ -1,5 +1,20 @@
-import puppeteer, { type Browser, BrowserWorker } from "@cloudflare/puppeteer";
+import puppeteer, {
+  type Browser,
+  BrowserWorker,
+  type Page,
+} from "@cloudflare/puppeteer";
 import { getStyledHtmlDocument, markdownToHtml } from "./markdown";
+
+// Extend Window interface for Mermaid
+declare global {
+  interface Window {
+    mermaid?: {
+      initialize: (config: { theme: string; startOnLoad: boolean }) => void;
+      run: (config?: { querySelector?: string }) => Promise<void>;
+    };
+    mermaidReady?: boolean;
+  }
+}
 
 /**
  * PDF generation options
@@ -16,6 +31,56 @@ export interface PdfOptions {
   headerTemplate?: string;
   footerTemplate?: string;
   printBackground?: boolean;
+}
+
+/**
+ * Wait for Mermaid diagrams to render in the page
+ * @param page - Puppeteer page instance
+ * @throws Error if Mermaid rendering fails (error is caught and logged as warning)
+ */
+async function waitForMermaidRender(page: Page): Promise<void> {
+  // Wait for Mermaid.js to be available (with longer timeout for CDN loading)
+  await page.waitForFunction(() => typeof window.mermaid !== "undefined", {
+    timeout: 20000,
+  });
+
+  // Manually initialize and render Mermaid if not already done
+  await page.evaluate(async () => {
+    if (typeof window.mermaid !== "undefined" && !window.mermaidReady) {
+      try {
+        window.mermaid.initialize({
+          theme: "default",
+          startOnLoad: false,
+        });
+        await window.mermaid.run({ querySelector: ".mermaid" });
+        window.mermaidReady = true;
+      } catch (error) {
+        console.error("Mermaid initialization error:", error);
+        window.mermaidReady = false;
+      }
+    }
+  });
+
+  // Wait for Mermaid to render all diagrams
+  // Check if all mermaid elements have been rendered (have SVG children)
+  await page.waitForFunction(
+    () => {
+      const mermaidElements = document.querySelectorAll(".mermaid");
+      if (mermaidElements.length === 0) return true;
+
+      // Check if all mermaid elements have been rendered (have SVG children)
+      for (const element of mermaidElements) {
+        if (!element.querySelector("svg")) {
+          return false;
+        }
+      }
+      return true;
+    },
+    { timeout: 30000, polling: 500 },
+  );
+
+  // Additional wait to ensure rendering is complete
+  await new Promise((resolve) => setTimeout(resolve, 500));
 }
 
 /**
@@ -59,6 +124,18 @@ export async function generatePdfFromHtml(
       waitUntil: "networkidle0",
     });
 
+    // Wait for Mermaid diagrams to render if present
+    const hasMermaid = htmlContent.includes('class="mermaid"');
+    if (hasMermaid) {
+      try {
+        await waitForMermaidRender(page);
+      } catch (error) {
+        console.warn("Mermaid rendering wait timeout or error:", error);
+        // Continue with PDF generation even if Mermaid rendering times out
+        // The diagrams may still render partially or not at all
+      }
+    }
+
     // Merge options with defaults
     const pdfOptions = { ...DEFAULT_PDF_OPTIONS, ...options };
 
@@ -70,6 +147,7 @@ export async function generatePdfFromHtml(
       displayHeaderFooter: pdfOptions.displayHeaderFooter,
       headerTemplate: pdfOptions.headerTemplate,
       footerTemplate: pdfOptions.footerTemplate,
+      timeout: 30000,
     });
 
     return pdfBuffer;

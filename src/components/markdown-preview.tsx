@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState, memo } from "react";
 import { useTheme } from "next-themes";
 import { markdownToHtml } from "@/lib/markdown";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { MermaidRenderer } from "@/components/mermaid-renderer";
 
 interface MarkdownPreviewProps {
   markdown: string;
@@ -33,12 +34,13 @@ const useMarkdownBodyBackgroundColor = () => {
   return { bgColor, markdownBodyRef };
 };
 
-export function MarkdownPreview({
+function MarkdownPreviewComponent({
   markdown,
   className = "",
 }: MarkdownPreviewProps) {
   const { theme, resolvedTheme } = useTheme();
   const { bgColor, markdownBodyRef } = useMarkdownBodyBackgroundColor();
+
   const html = useMemo(() => {
     return markdownToHtml(markdown);
   }, [markdown]);
@@ -59,6 +61,7 @@ export function MarkdownPreview({
 
   return (
     <ScrollArea className={`h-full ${className}`}>
+      <MermaidRenderer html={html} isDark={isDark} />
       <div className="p-6" style={{ backgroundColor: bgColor }}>
         <div
           ref={markdownBodyRef}
@@ -70,3 +73,5 @@ export function MarkdownPreview({
     </ScrollArea>
   );
 }
+
+export const MarkdownPreview = memo(MarkdownPreviewComponent);

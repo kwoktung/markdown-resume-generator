@@ -1,4 +1,4 @@
-import { marked } from "marked";
+import { marked, Renderer, type Tokens } from "marked";
 
 /**
  * Configure marked options for better markdown rendering
@@ -6,6 +6,31 @@ import { marked } from "marked";
 marked.setOptions({
   breaks: true, // Convert line breaks to <br>
   gfm: true, // Enable GitHub Flavored Markdown
+});
+
+/**
+ * Create a default renderer to access the original code renderer
+ */
+const defaultRenderer = new Renderer();
+
+/**
+ * Add custom renderer for Mermaid diagrams
+ * Converts ```mermaid code blocks to <div class="mermaid"> elements
+ * Uses the default renderer for all other code blocks to ensure proper escaping
+ */
+marked.use({
+  renderer: {
+    code(token: Tokens.Code): string {
+      // Check if this is a mermaid code block
+      if (token.lang === "mermaid") {
+        // Return a div with class "mermaid" instead of pre/code
+        // Note: Mermaid code is not escaped as it will be processed by Mermaid.js
+        return `<div class="mermaid">${token.text}</div>\n`;
+      }
+      // For all other code blocks, use the default renderer to ensure proper escaping
+      return defaultRenderer.code(token);
+    },
+  },
 });
 
 // todo: find a way to sanitize the html without using jsdom, safety for serverless functions
@@ -40,6 +65,9 @@ export function getStyledHtmlDocument(
   markdownHtml: string,
   title: string = "Document",
 ): string {
+  // Check if HTML contains mermaid diagrams
+  const hasMermaid = markdownHtml.includes('class="mermaid"');
+
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -47,6 +75,7 @@ export function getStyledHtmlDocument(
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title}</title>
+  ${hasMermaid ? '<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>' : ""}
   <style>
     /* GitHub Markdown CSS - Minimal version for PDF */
     body {
@@ -164,12 +193,58 @@ export function getStyledHtmlDocument(
 
     strong { font-weight: 600; }
     em { font-style: italic; }
+
+    /* Mermaid diagram styling */
+    .mermaid {
+      margin: 16px 0;
+      text-align: center;
+      overflow-x: auto;
+    }
+
+    .mermaid svg {
+      max-width: 100%;
+      height: auto;
+    }
   </style>
 </head>
 <body>
   <div class="markdown-body">
     ${markdownHtml}
   </div>
+  ${
+    hasMermaid
+      ? `
+  <script>
+    (async function() {
+      // Wait for Mermaid.js to load
+      let retries = 50; // 5 seconds max wait
+      while (typeof mermaid === 'undefined' && retries > 0) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        retries--;
+      }
+      
+      if (typeof mermaid !== 'undefined') {
+        mermaid.initialize({ 
+          theme: 'default',
+          startOnLoad: false 
+        });
+        try {
+          await mermaid.run({ querySelector: '.mermaid' });
+          // Signal that Mermaid rendering is complete
+          window.mermaidReady = true;
+        } catch (error) {
+          console.error('Mermaid rendering error:', error);
+          window.mermaidReady = false;
+        }
+      } else {
+        console.error('Mermaid.js failed to load');
+        window.mermaidReady = false;
+      }
+    })();
+  </script>
+  `
+      : ""
+  }
 </body>
 </html>
   `.trim();
