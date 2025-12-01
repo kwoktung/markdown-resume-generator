@@ -13,7 +13,7 @@ export default function Home() {
           <Link href="/" className="flex items-center gap-2">
             <FileText className="h-6 w-6" />
             <span className="text-lg font-semibold tracking-tight">
-              Markdown Resume
+              Markdown Pro
             </span>
           </Link>
           <nav className="flex items-center gap-6">
@@ -30,15 +30,14 @@ export default function Home() {
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-1.5 text-sm">
               <Sparkles className="h-4 w-4" />
-              <span>Create professional resumes in minutes</span>
+              <span>Your all-in-one markdown solution</span>
             </div>
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl max-w-4xl">
-              Build Your Resume with{" "}
-              <span className="text-primary">Markdown</span>
+              Online Markdown Editor
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl sm:text-xl">
-              Write your resume in markdown, preview in real-time, and export as
-              a beautiful PDF. Simple, fast, and version-control friendly.
+              Write, preview, and export your markdown documents to PDF with
+              ease. Simple, fast, and powerful.
             </p>
           </div>
 
@@ -62,11 +61,11 @@ export default function Home() {
         <section className="container mx-auto px-4 py-16 md:px-8 md:py-24 border-t border-border">
           <div className="flex flex-col items-center gap-4 text-center mb-16">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Why Markdown Resume?
+              Why Markdown Pro?
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl">
-              A modern approach to resume creation that combines simplicity with
-              power.
+              A modern approach to document creation that combines simplicity
+              with power.
             </p>
           </div>
 
@@ -75,10 +74,10 @@ export default function Home() {
               <div className="p-3 rounded-full bg-primary/10">
                 <Edit className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold">Easy to Write</h3>
+              <h3 className="text-xl font-semibold">Online Markdown Editor</h3>
               <p className="text-muted-foreground">
-                Use simple markdown syntax to create your resume. No complex
-                formatting needed.
+                Use our intuitive online editor with simple markdown syntax. No
+                complex formatting needed.
               </p>
             </div>
 
@@ -98,7 +97,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold">Export to PDF</h3>
               <p className="text-muted-foreground">
-                Download your resume as a professional-looking PDF with one
+                Download your document as a professional-looking PDF with one
                 click.
               </p>
             </div>
@@ -112,12 +111,11 @@ export default function Home() {
               Ready to Get Started?
             </h2>
             <p className="text-lg text-muted-foreground max-w-xl">
-              Join thousands of professionals who create their resumes with
-              markdown.
+              Start creating beautiful documents with the power of markdown.
             </p>
             <Button asChild size="lg" className="text-base">
               <Link href="/editor">
-                Create Your Resume
+                Start Editing
                 <FileText className="ml-2 h-4 w-4" />
               </Link>
             </Button>
@@ -129,7 +127,7 @@ export default function Home() {
       <footer className="border-t border-border bg-muted/50">
         <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-6 md:px-8">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Markdown Resume. All rights reserved.
+            © {new Date().getFullYear()} Markdown Pro. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <a

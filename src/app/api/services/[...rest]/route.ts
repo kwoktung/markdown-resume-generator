@@ -15,9 +15,10 @@ app.route("/pdf", pdfApp);
 app.doc31("/docs", {
   openapi: "3.1.0",
   info: {
-    title: "Markdown Resume API",
+    title: "Markdown Pro API",
     version: "1.0.0",
-    description: "API for managing markdown resumes with AI-powered assistance",
+    description:
+      "API for managing markdown documents with AI-powered assistance",
   },
   servers: [
     {
@@ -30,7 +31,7 @@ app.get(
   "/scalar",
   Scalar({
     url: `${basePath}/docs`,
-    title: "Markdown Resume API",
+    title: "Markdown Pro API",
   }),
 );
 

@@ -20,27 +20,27 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Markdown Resume Generator - Create Professional Resumes Online",
-    template: "%s | Markdown Resume Generator",
+    default: "Markdown Pro - Online Markdown Editor with PDF Export",
+    template: "%s | Markdown Pro",
   },
   description:
-    "Create beautiful, professional resumes with Markdown. Free online resume builder with real-time preview, PDF export, and AI-powered assistance. Build your perfect resume in minutes.",
+    "Write, preview, and export your markdown documents to PDF with ease. Free online markdown editor with real-time preview, PDF export, and AI-powered assistance.",
   keywords: [
-    "resume builder",
-    "markdown resume",
-    "CV creator",
-    "online resume",
-    "professional resume",
-    "resume generator",
-    "free resume builder",
-    "PDF resume",
-    "resume template",
     "markdown editor",
-    "AI resume assistant",
+    "online markdown",
+    "markdown to PDF",
+    "markdown preview",
+    "document editor",
+    "markdown converter",
+    "free markdown editor",
+    "PDF export",
+    "markdown writing",
+    "text editor",
+    "AI writing assistant",
   ],
-  authors: [{ name: "Markdown Resume Generator" }],
-  creator: "Markdown Resume Generator",
-  publisher: "Markdown Resume Generator",
+  authors: [{ name: "Markdown Pro" }],
+  creator: "Markdown Pro",
+  publisher: "Markdown Pro",
   formatDetection: {
     email: false,
     address: false,
@@ -54,26 +54,26 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "/",
-    title: "Markdown Resume Generator - Create Professional Resumes Online",
+    title: "Markdown Pro - Online Markdown Editor with PDF Export",
     description:
-      "Create beautiful, professional resumes with Markdown. Free online resume builder with real-time preview, PDF export, and AI-powered assistance.",
-    siteName: "Markdown Resume Generator",
+      "Write, preview, and export your markdown documents to PDF with ease. Free online markdown editor with real-time preview, PDF export, and AI-powered assistance.",
+    siteName: "Markdown Pro",
     images: [
       {
         url: "/logo.png",
         width: 1200,
         height: 630,
-        alt: "Markdown Resume Generator",
+        alt: "Markdown Pro",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Markdown Resume Generator - Create Professional Resumes Online",
+    title: "Markdown Pro - Online Markdown Editor with PDF Export",
     description:
-      "Create beautiful, professional resumes with Markdown. Free online resume builder with real-time preview, PDF export, and AI-powered assistance.",
+      "Write, preview, and export your markdown documents to PDF with ease. Free online markdown editor with real-time preview, PDF export, and AI-powered assistance.",
     images: ["/logo.png"],
-    creator: "@markdownresume",
+    creator: "@markdownpro",
   },
   robots: {
     index: true,
@@ -91,11 +91,11 @@ export const metadata: Metadata = {
     apple: "/logo.png",
   },
   manifest: "/manifest.json",
-  applicationName: "Markdown Resume Generator",
+  applicationName: "Markdown Pro",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Markdown Resume",
+    title: "Markdown Pro",
   },
   verification: {
     // Add your verification tokens here when you get them

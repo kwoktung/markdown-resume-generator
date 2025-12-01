@@ -1,18 +1,18 @@
-# Markdown Resume
+# Markdown Pro
 
-A modern web application for creating and managing professional resumes using Markdown. Built with Next.js, this project provides an intuitive markdown editor with live preview and PDF export capabilities.
+A modern web application for creating and managing documents using Markdown. Built with Next.js, this project provides an intuitive markdown editor with live preview and PDF export capabilities.
 
 ## Features
 
-- **Markdown Editor**: Write your resume in Markdown with real-time preview
-- **🤖 AI Resume Assistant**: Get intelligent help with writing and improving your resume (for logged-in users)
-  - Context-aware suggestions based on your resume content
-  - Quick actions for common tasks (improve summary, enhance experience, add metrics)
-  - Direct text insertion into your resume
+- **Markdown Editor**: Write your documents in Markdown with real-time preview
+- **🤖 AI Writing Assistant**: Get intelligent help with writing and improving your content (for logged-in users)
+  - Context-aware suggestions based on your document content
+  - Quick actions for common tasks
+  - Direct text insertion into your document
   - Powered by Cloudflare AI Workers
 - **Authentication**: Secure user authentication with NextAuth.js
-- **Document Management**: Create, edit, and manage multiple resume documents
-- **PDF Export**: Convert your markdown resume to PDF format
+- **Document Management**: Create, edit, and manage multiple documents
+- **PDF Export**: Convert your markdown documents to PDF format
 - **Modern UI**: Clean and responsive interface built with React and Tailwind CSS
 - **Theme Support**: Light and dark mode theme toggle
 - **Database Integration**: Persistent storage with Drizzle ORM
@@ -87,7 +87,7 @@ Run these 4 steps to set up your local database:
 1. **Create a local D1 database**
 
 ```bash
-npx wrangler d1 create markdown-resume
+npx wrangler d1 create markdown-pro
 ```
 
 2. **Update your `wrangler.jsonc` with the database ID**
@@ -111,7 +111,7 @@ Run these 4 steps to set up your production database:
 1. **Create a production D1 database**
 
 ```bash
-npx wrangler d1 create markdown-resume
+npx wrangler d1 create markdown-pro
 ```
 
 2. **Update your `wrangler.jsonc` with the database ID**
@@ -155,10 +155,10 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## AI Chatbox Feature
 
-This application includes an AI-powered chatbox to assist users with resume writing. The AI assistant appears as a floating button in the editor and provides:
+This application includes an AI-powered chatbox to assist users with writing. The AI assistant appears as a floating button in the editor and provides:
 
-- Intelligent suggestions for improving resume content
-- Help with writing professional summaries, job descriptions, and achievements
+- Intelligent suggestions for improving content
+- Help with writing professional documents
 - Grammar and tone improvements
 - Format and structure recommendations
 
