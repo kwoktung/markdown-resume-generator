@@ -1258,3 +1258,24 @@
 .markdown-body .highlight pre:has(+ .zeroclipboard-container) {
   min-height: 52px;
 }
+
+/* Mermaid diagram styling */
+.markdown-body .mermaid {
+  margin: var(--base-size-16) 0;
+  text-align: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.markdown-body .mermaid svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Ensure Mermaid diagrams don't break layout */
+.markdown-body .mermaid {
+  display: block;
+  width: 100%;
+}
