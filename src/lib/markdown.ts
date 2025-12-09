@@ -42,7 +42,17 @@ marked.use({
  * it is rendered via dangerouslySetInnerHTML, preventing XSS attacks.
  */
 const sanitizeHtml = (html: string): string => {
-  return DOMPurify.sanitize(html, {
+  // Add a custom hook to block data: URIs in src/href attributes
+  DOMPurify.addHook('uponSanitizeAttribute', (node, data) => {
+    // Block data: URIs in src and href attributes
+    if ((data.attrName === 'src' || data.attrName === 'href') && 
+        data.attrValue && 
+        data.attrValue.trim().toLowerCase().startsWith('data:')) {
+      data.attrValue = ''; // Remove the attribute value
+    }
+  });
+
+  const sanitized = DOMPurify.sanitize(html, {
     ALLOWED_TAGS: [
       // Text content
       "p", "br", "span", "div",
@@ -64,8 +74,9 @@ const sanitizeHtml = (html: string): string => {
       "hr",
       // Images
       "img",
-      // Mermaid diagrams
-      "svg", "g", "path", "rect", "circle", "ellipse", "line", "polyline", "polygon", "text", "tspan", "defs", "marker", "foreignObject",
+      // Mermaid diagrams (SVG elements)
+      // Note: foreignObject is excluded as it can contain arbitrary HTML content
+      "svg", "g", "path", "rect", "circle", "ellipse", "line", "polyline", "polygon", "text", "tspan", "defs", "marker",
     ],
     ALLOWED_ATTR: [
       // Common attributes
@@ -82,7 +93,6 @@ const sanitizeHtml = (html: string): string => {
       "font-family", "font-weight", "dx", "dy", "refX", "refY", "markerWidth",
       "markerHeight", "orient", "markerUnits",
     ],
-    ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|data|blob):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
     ALLOW_DATA_ATTR: false,
     ALLOW_UNKNOWN_PROTOCOLS: false,
     SAFE_FOR_TEMPLATES: true,
@@ -90,6 +100,11 @@ const sanitizeHtml = (html: string): string => {
     FORBID_TAGS: ["script", "style", "iframe", "object", "embed", "base", "link", "meta", "form", "input", "button"],
     FORBID_ATTR: ["style", "onerror", "onload", "onclick", "onmouseover", "onfocus", "onblur", "oninput", "onchange", "onsubmit", "onreset", "onselect", "onabort", "onanimationend", "onanimationiteration", "onanimationstart", "onbeforeunload", "onblur", "oncancel", "oncanplay", "oncanplaythrough", "onchange", "onclick", "onclose", "oncontextmenu", "oncopy", "oncuechange", "oncut", "ondblclick", "ondrag", "ondragend", "ondragenter", "ondragleave", "ondragover", "ondragstart", "ondrop", "ondurationchange", "onemptied", "onended", "onerror", "onfocus", "onformdata", "oninput", "oninvalid", "onkeydown", "onkeypress", "onkeyup", "onload", "onloadeddata", "onloadedmetadata", "onloadstart", "onmousedown", "onmouseenter", "onmouseleave", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onpaste", "onpause", "onplay", "onplaying", "onprogress", "onratechange", "onreset", "onresize", "onscroll", "onsecuritypolicyviolation", "onseeked", "onseeking", "onselect", "onslotchange", "onstalled", "onsubmit", "onsuspend", "ontimeupdate", "ontoggle", "onvolumechange", "onwaiting", "onwheel"],
   });
+
+  // Clean up the hook after use
+  DOMPurify.removeHooks('uponSanitizeAttribute');
+
+  return sanitized;
 };
 
 /**
