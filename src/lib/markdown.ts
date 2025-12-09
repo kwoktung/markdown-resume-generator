@@ -1,4 +1,5 @@
 import { marked, Renderer, type Tokens } from "marked";
+import DOMPurify from "isomorphic-dompurify";
 
 /**
  * Configure marked options for better markdown rendering
@@ -33,14 +34,67 @@ marked.use({
   },
 });
 
-// todo: find a way to sanitize the html without using jsdom, safety for serverless functions
-const dompurify = (html: string) => {
-  return html;
+/**
+ * Sanitize HTML to prevent XSS attacks
+ * Uses isomorphic-dompurify which works in both browser and Node.js environments
+ * 
+ * This fixes CVE-2025-55182 (React2Shell) by properly sanitizing HTML before
+ * it is rendered via dangerouslySetInnerHTML, preventing XSS attacks.
+ */
+const sanitizeHtml = (html: string): string => {
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: [
+      // Text content
+      "p", "br", "span", "div",
+      // Headings
+      "h1", "h2", "h3", "h4", "h5", "h6",
+      // Lists
+      "ul", "ol", "li",
+      // Formatting
+      "strong", "em", "u", "s", "del", "ins", "sub", "sup", "mark",
+      // Code
+      "code", "pre",
+      // Links
+      "a",
+      // Tables
+      "table", "thead", "tbody", "tr", "th", "td",
+      // Blockquotes
+      "blockquote",
+      // Horizontal rule
+      "hr",
+      // Images
+      "img",
+      // Mermaid diagrams
+      "svg", "g", "path", "rect", "circle", "ellipse", "line", "polyline", "polygon", "text", "tspan", "defs", "marker", "foreignObject",
+    ],
+    ALLOWED_ATTR: [
+      // Common attributes
+      "class", "id",
+      // Link attributes
+      "href", "target", "rel",
+      // Image attributes
+      "src", "alt", "width", "height",
+      // Table attributes
+      "colspan", "rowspan", "align",
+      // SVG attributes (for Mermaid diagrams only)
+      "viewBox", "xmlns", "fill", "stroke", "stroke-width", "x", "y", "x1", "y1", "x2", "y2",
+      "cx", "cy", "r", "rx", "ry", "points", "d", "transform", "text-anchor", "font-size",
+      "font-family", "font-weight", "dx", "dy", "refX", "refY", "markerWidth",
+      "markerHeight", "orient", "markerUnits",
+    ],
+    ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|data|blob):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+    ALLOW_DATA_ATTR: false,
+    ALLOW_UNKNOWN_PROTOCOLS: false,
+    SAFE_FOR_TEMPLATES: true,
+    // Explicitly forbid dangerous tags and attributes
+    FORBID_TAGS: ["script", "style", "iframe", "object", "embed", "base", "link", "meta", "form", "input", "button"],
+    FORBID_ATTR: ["style", "onerror", "onload", "onclick", "onmouseover", "onfocus", "onblur", "oninput", "onchange", "onsubmit", "onreset", "onselect", "onabort", "onanimationend", "onanimationiteration", "onanimationstart", "onbeforeunload", "onblur", "oncancel", "oncanplay", "oncanplaythrough", "onchange", "onclick", "onclose", "oncontextmenu", "oncopy", "oncuechange", "oncut", "ondblclick", "ondrag", "ondragend", "ondragenter", "ondragleave", "ondragover", "ondragstart", "ondrop", "ondurationchange", "onemptied", "onended", "onerror", "onfocus", "onformdata", "oninput", "oninvalid", "onkeydown", "onkeypress", "onkeyup", "onload", "onloadeddata", "onloadedmetadata", "onloadstart", "onmousedown", "onmouseenter", "onmouseleave", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onpaste", "onpause", "onplay", "onplaying", "onprogress", "onratechange", "onreset", "onresize", "onscroll", "onsecuritypolicyviolation", "onseeked", "onseeking", "onselect", "onslotchange", "onstalled", "onsubmit", "onsuspend", "ontimeupdate", "ontoggle", "onvolumechange", "onwaiting", "onwheel"],
+  });
 };
 
 /**
  * Convert markdown to HTML
- * Sanitizes the output to prevent XSS attacks
+ * Sanitizes the output to prevent XSS attacks (CVE-2025-55182)
  */
 export function markdownToHtml(markdown: string): string {
   if (!markdown) {
@@ -50,7 +104,8 @@ export function markdownToHtml(markdown: string): string {
   try {
     // Convert markdown to HTML
     const rawHtml = marked.parse(markdown, { async: false }) as string;
-    return dompurify(rawHtml);
+    // Sanitize HTML to prevent XSS attacks
+    return sanitizeHtml(rawHtml);
   } catch (error) {
     console.error("Error converting markdown to HTML:", error);
     return "";

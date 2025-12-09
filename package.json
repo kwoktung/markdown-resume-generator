@@ -38,6 +38,7 @@
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.44.7",
     "hono": "^4.10.3",
+    "isomorphic-dompurify": "^2.34.0",
     "lucide-react": "^0.548.0",
     "marked": "^17.0.0",
     "next": "15.4.6",
