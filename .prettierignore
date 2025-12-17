@@ -2,3 +2,4 @@
 build
 coverage
 src/database/migrations
+cloudflare-env.d.ts
